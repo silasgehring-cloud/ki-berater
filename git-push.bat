@@ -1,9 +1,8 @@
 @echo off
 setlocal EnableDelayedExpansion
-chcp 65001 >nul
 
 REM Quick-push helper. Doppelklick: zeigt Aenderungen, fragt Commit-Message,
-REM committet, pusht. Schliesst nicht automatisch — Pause am Ende.
+REM committet und pusht. Pause am Ende - Fenster bleibt offen.
 
 cd /d "%~dp0"
 
@@ -12,7 +11,7 @@ echo   KI-Verkaufsberater - Git Push
 echo ============================================
 echo.
 
-where git >nul 2>nul
+where git 1>NUL 2>NUL
 if errorlevel 1 (
     echo FEHLER: Git ist nicht im PATH.
     echo Installiere Git for Windows: https://git-scm.com/download/win
@@ -21,10 +20,10 @@ if errorlevel 1 (
     exit /b 1
 )
 
-git rev-parse --git-dir >nul 2>nul
+git rev-parse --git-dir 1>NUL 2>NUL
 if errorlevel 1 (
     echo FEHLER: Kein Git-Repo gefunden.
-    echo Initialisiere zuerst: git init
+    echo Initialisiere zuerst mit: git init
     echo.
     pause
     exit /b 1
@@ -40,29 +39,26 @@ git status --short
 echo --------------------
 echo.
 
-REM Check ob es ueberhaupt was zu committen gibt
 set HAS_CHANGES=0
 for /f %%i in ('git status --porcelain') do set HAS_CHANGES=1
 
 if "!HAS_CHANGES!"=="0" (
-    echo [i] Keine lokalen Aenderungen zu committen.
+    echo Keine lokalen Aenderungen zu committen.
     echo.
-    set /p PUSH_ANYWAY=Trotzdem nur pushen ^(j/N^)?
+    set /p PUSH_ANYWAY=Trotzdem nur pushen [j/N]?
     if /i not "!PUSH_ANYWAY!"=="j" (
         echo Abgebrochen.
         echo.
         pause
         exit /b 0
     )
-    goto :PUSH_ONLY
+    goto PUSH_ONLY
 )
 
-echo Commit-Message eingeben ^(leer = Auto-Default mit Datum/Uhrzeit^):
-set /p COMMIT_MSG=^>^>
+echo Commit-Message eingeben [leer = Auto-Default mit Datum/Uhrzeit]:
+set /p COMMIT_MSG=^>^>^>
 
-if "!COMMIT_MSG!"=="" (
-    set COMMIT_MSG=Update %date% %time%
-)
+if "!COMMIT_MSG!"=="" set COMMIT_MSG=Update %date% %time%
 
 echo.
 echo --- git add . ---
@@ -75,7 +71,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo --- git commit -m "!COMMIT_MSG!" ---
+echo --- git commit ---
 git commit -m "!COMMIT_MSG!"
 
 :PUSH_ONLY
@@ -89,7 +85,7 @@ if errorlevel 1 (
     echo ============================================
     echo Moegliche Ursachen:
     echo   1. Keine Internetverbindung
-    echo   2. GitHub-Login abgelaufen ^(siehe Git Credential Manager^)
+    echo   2. GitHub-Login abgelaufen
     echo   3. Branch noch nicht getrackt: git push -u origin main
     echo   4. Konflikt mit Remote: erst "git pull --rebase" ausfuehren
     echo.
@@ -99,7 +95,7 @@ if errorlevel 1 (
 
 echo.
 echo ============================================
-echo   FERTIG — Push erfolgreich.
+echo   FERTIG - Push erfolgreich.
 echo ============================================
 echo.
 git log --oneline -1
