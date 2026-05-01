@@ -1,0 +1,103 @@
+---
+const plans = [
+  {
+    name: "Starter",
+    price: "39",
+    conversations: 300,
+    cta: "Beta starten",
+    highlight: false,
+    features: [
+      "300 Beratungs-Gespräche / Monat",
+      "Echtzeit-Produkt-Sync",
+      "DSGVO-konform aus Deutschland",
+      "Conversion-Tracking",
+      "E-Mail-Support",
+    ],
+  },
+  {
+    name: "Growth",
+    price: "129",
+    conversations: 1500,
+    cta: "Beta starten",
+    highlight: true,
+    features: [
+      "1.500 Beratungs-Gespräche / Monat",
+      "Alles aus Starter",
+      "Mehrsprachig konfigurierbar",
+      "Mini-Analytics-Dashboard",
+      "Priority Support",
+    ],
+  },
+  {
+    name: "Pro",
+    price: "349",
+    conversations: 5000,
+    cta: "Beta starten",
+    highlight: false,
+    features: [
+      "5.000 Beratungs-Gespräche / Monat",
+      "Alles aus Growth",
+      "API-Zugang",
+      "Custom-Branding im Widget",
+      "Slack-Channel-Support",
+    ],
+  },
+];
+---
+<section id="pricing" class="py-20 md:py-28 bg-slate-50">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="max-w-2xl">
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+        Faire Preise, harte Limits
+      </h2>
+      <p class="mt-4 text-lg text-slate-600">
+        Pure Subscription, keine Versteckten Overages. Erreichst du das Limit,
+        upgradest du oder wartest auf den nächsten Monat.
+      </p>
+    </div>
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+      {plans.map((p) => (
+        <div class={`rounded-2xl p-8 flex flex-col ${
+          p.highlight
+            ? "bg-brand-600 text-white shadow-xl ring-4 ring-brand-600/30"
+            : "bg-white border border-slate-200"
+        }`}>
+          {p.highlight && (
+            <span class="self-start text-xs font-bold uppercase tracking-wider bg-white text-brand-700 rounded-full px-3 py-1 mb-3">
+              Populär
+            </span>
+          )}
+          <h3 class="text-xl font-bold">{p.name}</h3>
+          <div class="mt-4 flex items-baseline gap-1">
+            <span class="text-5xl font-bold">{p.price}</span>
+            <span class={p.highlight ? "text-brand-100" : "text-slate-500"}>€ / Monat</span>
+          </div>
+          <p class={`mt-1 text-sm ${p.highlight ? "text-brand-100" : "text-slate-500"}`}>
+            zzgl. MwSt
+          </p>
+          <ul class="mt-6 space-y-3 text-sm">
+            {p.features.map((f) => (
+              <li class="flex items-start gap-2">
+                <svg class={`w-4 h-4 mt-1 flex-shrink-0 ${p.highlight ? "text-white" : "text-brand-600"}`}
+                     viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                </svg>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <a href="#cta" class={`mt-8 block text-center px-5 py-3 rounded-lg font-medium ${
+            p.highlight
+              ? "bg-white text-brand-700 hover:bg-brand-50"
+              : "bg-brand-600 hover:bg-brand-700 text-white"
+          }`}>
+            {p.cta}
+          </a>
+        </div>
+      ))}
+    </div>
+    <p class="mt-8 text-center text-sm text-slate-500">
+      Mehr als 5.000 Gespräche/Monat? <a href="mailto:hello@ki-berater.de" class="text-brand-600 underline">Lass uns reden — Enterprise-Plan ab 999 €.</a>
+    </p>
+  </div>
+</section>

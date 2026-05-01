@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (Python)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ki
+          POSTGRES_PASSWORD: ki
+          POSTGRES_DB: ki
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ki"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Lint (ruff)
+        run: ruff check backend
+
+      - name: Type-check (mypy strict)
+        run: mypy backend
+
+      - name: Test (pytest)
+        run: pytest -v
+        env:
+          DATABASE_URL: postgresql+asyncpg://ki:ki@localhost:5432/ki
+          REDIS_URL: redis://localhost:6379/0
+
+  plugin:
+    name: WordPress Plugin (PHP)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugin/ki-berater
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: composer:v2, phpstan, phpcs
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-publish
+
+      - name: Cache composer deps
+        uses: actions/cache@v4
+        with:
+          path: plugin/ki-berater/vendor
+          key: composer-${{ hashFiles('plugin/ki-berater/composer.json') }}
+          restore-keys: composer-
+
+      - name: Install composer deps
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Lint PHP syntax
+        run: |
+          find . -path ./vendor -prune -o -name '*.php' -print0 \
+            | xargs -0 -n1 php -l
+
+      - name: PHPStan (level 6)
+        run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+
+      - name: PHP_CodeSniffer (WordPress)
+        run: vendor/bin/phpcs --standard=WordPress --report=summary includes/ ki-berater.php
+        continue-on-error: true   # WPCS findings are warnings, not blockers (yet)

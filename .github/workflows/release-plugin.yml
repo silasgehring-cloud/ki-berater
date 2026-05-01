@@ -1,0 +1,61 @@
+name: Release Plugin
+
+# Triggered by tags matching `plugin-vX.Y.Z`. Bump the version in:
+#   1. plugin/ki-berater/ki-berater.php  (Plugin Header `Version:`)
+#   2. plugin/ki-berater/ki-berater.php  (KIB_VERSION constant)
+#   3. plugin/ki-berater/readme.txt      (Stable tag:)
+# then `git tag plugin-vX.Y.Z && git push --tags`.
+
+on:
+  push:
+    tags:
+      - 'plugin-v*'
+
+permissions:
+  contents: write   # für softprops/action-gh-release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install runtime deps (no-dev)
+        working-directory: plugin/ki-berater
+        run: composer install --no-dev --no-interaction --optimize-autoloader
+
+      - name: Stage clean copy of the plugin
+        run: |
+          mkdir -p artifact
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.gitignore' \
+            --exclude='composer.json' \
+            --exclude='composer.lock' \
+            --exclude='phpstan.neon' \
+            --exclude='phpunit.xml*' \
+            --exclude='tests/' \
+            --exclude='.distignore' \
+            plugin/ki-berater/ artifact/ki-berater/
+
+      - name: Build zip
+        run: |
+          cd artifact
+          zip -r "../ki-berater-${GITHUB_REF_NAME}.zip" ki-berater
+          ls -la ../ki-berater-*.zip
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ki-berater-${{ github.ref_name }}.zip
+          name: "Plugin ${{ github.ref_name }}"
+          generate_release_notes: true
+          fail_on_unmatched_files: true

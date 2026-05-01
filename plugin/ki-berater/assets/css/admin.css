@@ -1,0 +1,20 @@
+.kib-settings .form-table th {
+  width: 200px;
+}
+
+.kib-status-msg {
+  margin-left: 12px;
+  font-weight: 600;
+}
+
+.kib-status-msg.kib-status-msg--ok {
+  color: #1f8a25;
+}
+
+.kib-status-msg.kib-status-msg--error {
+  color: #b32d2e;
+}
+
+.kib-status-msg.kib-status-msg--info {
+  color: #2271b1;
+}

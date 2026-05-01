@@ -1,0 +1,34 @@
+# Caddy 2.x config — automatic HTTPS via Let's Encrypt.
+# The {$DOMAIN} and {$EMAIL} variables come from docker-compose env.
+
+{
+    email {$EMAIL}
+}
+
+{$DOMAIN} {
+    encode zstd gzip
+
+    # SSE needs flushing — Caddy 2 enables it for text/event-stream by default,
+    # but we set the response buffering off as belt-and-suspenders.
+    @sse {
+        path /v1/conversations/stream
+        path /v1/conversations/*/messages/stream
+    }
+    handle @sse {
+        reverse_proxy backend:8000 {
+            flush_interval -1
+            transport http {
+                read_buffer 4KB
+            }
+        }
+    }
+
+    handle {
+        reverse_proxy backend:8000
+    }
+
+    log {
+        output stdout
+        format console
+    }
+}

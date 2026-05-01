@@ -1,0 +1,14 @@
+parameters:
+  level: 6
+  paths:
+    - ki-berater.php
+    - uninstall.php
+    - includes/
+  bootstrapFiles:
+    - vendor/szepeviktor/phpstan-wordpress/bootstrap.php
+  scanDirectories:
+    - vendor/php-stubs/woocommerce-stubs
+  excludePaths:
+    - vendor/*
+includes:
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon

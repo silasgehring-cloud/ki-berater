@@ -1,0 +1,18 @@
+* text=auto eol=lf
+
+# Force LF on files that run in Linux containers / shells
+*.sh         text eol=lf
+*.py         text eol=lf
+Dockerfile   text eol=lf
+Makefile     text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+*.neon       text eol=lf
+
+# Treat as binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.zip  binary

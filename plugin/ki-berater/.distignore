@@ -1,0 +1,13 @@
+# Files NOT to ship in the WP-installable zip (used by the release workflow).
+.git
+.gitignore
+.distignore
+composer.json
+composer.lock
+phpstan.neon
+phpunit.xml
+phpunit.xml.dist
+tests/
+.vscode/
+.idea/
+node_modules/

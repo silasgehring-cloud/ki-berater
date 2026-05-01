@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual envs
+.venv/
+venv/
+env/
+ENV/
+
+# Testing & tooling caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Docker volumes (when bind-mounted)
+postgres_data/
+redis_data/
+qdrant_data/
+
+# Logs
+*.log
+logs/
+
+# WordPress / Composer
+plugin/ki-berater/vendor/
+plugin/ki-berater/composer.lock
+
+# Landing page (Astro)
+landing/node_modules/
+landing/dist/
+landing/.astro/
+
+# Plugin distribution build artifacts
+dist/
+staging/
+
+# Test artifacts (pgserver throws temp dirs in here on Windows)
+**/pgsrv_*/
+
+# Claude Agent SDK working files
+.claude/
