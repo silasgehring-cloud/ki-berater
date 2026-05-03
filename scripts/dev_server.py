@@ -6,7 +6,10 @@ laesst Alembic die Migrationen laufen und startet uvicorn im Vordergrund.
 Postgres-Daten persistieren in `.pgsrv/` (gitignored). Qdrant laeuft
 in-memory (Default in `settings`), Redis-Rate-Limit ebenfalls.
 
-Erster Run laedt Postgres-Binaries einmalig (~50 MB).
+Erster Run laedt Postgres-Binaries einmalig (~50 MB) und startet pg_ctl —
+beides kann auf Windows wegen Defender-Scan langsam sein. Wir patchen
+deshalb pgserver's hartcodierte 10s-Timeouts auf 60s und retry'n bei
+Time-out.
 
 Stop: Ctrl+C in diesem Fenster. pgserver shuttet via atexit ab.
 """
@@ -20,11 +23,31 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PGDATA = ROOT / ".pgsrv"
 
+# Windows-Defender-Scan beim ersten pg_ctl-Aufruf braucht oft >10s.
+# pgserver hat einen hartcodierten 10s-Timeout in seinem subprocess.run-
+# Wrapper. Wir patchen subprocess.run BEVOR pgserver importiert wird, damit
+# die kurzen Timeouts auf einen sinnvollen Wert hochgesetzt werden.
+_PGCTL_TIMEOUT_SECONDS = 60
+
+_orig_subprocess_run = subprocess.run
+
+
+def _patched_subprocess_run(*args, **kwargs):  # type: ignore[no-untyped-def]
+    timeout = kwargs.get("timeout")
+    if isinstance(timeout, (int, float)) and timeout < _PGCTL_TIMEOUT_SECONDS:
+        kwargs["timeout"] = _PGCTL_TIMEOUT_SECONDS
+    return _orig_subprocess_run(*args, **kwargs)
+
 
 def main() -> int:
     PGDATA.mkdir(exist_ok=True)
 
-    print("[1/3] Boote embedded Postgres (erster Run laedt ~50 MB Binaries)...")
+    print("[1/3] Boote embedded Postgres (erster Run kann 30-60s dauern)...")
+
+    # Patch BEFORE importing pgserver so its module-level subprocess.run
+    # references see the patched version.
+    subprocess.run = _patched_subprocess_run  # type: ignore[assignment]
+
     try:
         import pgserver
     except ImportError:
@@ -32,11 +55,25 @@ def main() -> int:
         print("  .venv/Scripts/pip install -e \".[dev]\"")
         return 1
 
-    try:
-        srv = pgserver.get_server(str(PGDATA), cleanup_mode="stop")
-    except Exception as exc:
-        print(f"FEHLER beim Postgres-Boot: {exc}")
-        print("Tipp: reset-dev.bat ausfuehren um .pgsrv/ neu anzulegen.")
+    last_exc: Exception | None = None
+    srv = None
+    for attempt in range(1, 4):
+        try:
+            srv = pgserver.get_server(str(PGDATA), cleanup_mode="stop")
+            break
+        except Exception as exc:
+            last_exc = exc
+            print(f"      Versuch {attempt}/3 fehlgeschlagen: {exc}")
+            if attempt < 3:
+                print("      Retry...")
+
+    if srv is None:
+        print()
+        print(f"FEHLER beim Postgres-Boot nach 3 Versuchen: {last_exc}")
+        print("Tipps:")
+        print("  - reset-dev.bat ausfuehren um .pgsrv/ neu anzulegen")
+        print("  - Antivirus/Defender pausieren waehrend des ersten Boots")
+        print("  - Prozess-Manager: alte postgres.exe Prozesse killen")
         return 1
 
     sync_uri = srv.get_uri()
