@@ -2,6 +2,11 @@
 
 Real providers are only instantiated when their API key is configured.
 Tests inject a router with the MockProvider via FastAPI dependency override.
+
+Dev-only fallback: when NO API keys are set AND environment != production,
+we register an in-process MockProvider so the End-to-End-Flow works without
+external dependencies. In production this never kicks in — `llm.no_providers
+_configured` warning fires and Router.complete() will raise.
 """
 from __future__ import annotations
 
@@ -38,10 +43,34 @@ def build_default_router() -> Router:
         )
 
     if not providers:
-        logger.warning(
-            "llm.no_providers_configured",
-            hint="set ANTHROPIC_API_KEY and/or GOOGLE_API_KEY",
-        )
+        if settings.is_production:
+            logger.warning(
+                "llm.no_providers_configured",
+                hint="set ANTHROPIC_API_KEY and/or GOOGLE_API_KEY",
+            )
+        else:
+            # Dev fallback so the local end-to-end flow works without API keys.
+            from backend.llm.providers.mock import MockProvider
+
+            mock = MockProvider(
+                response=(
+                    "Hallo! Das ist eine Beispielantwort vom Mock-Provider, "
+                    "weil aktuell kein echter LLM-Anbieter konfiguriert ist. "
+                    "Setze GOOGLE_API_KEY oder ANTHROPIC_API_KEY in deiner .env "
+                    "fuer echte KI-Antworten."
+                )
+            )
+            providers["mock-flash"] = mock
+            providers["mock-sonnet"] = mock
+            logger.warning(
+                "llm.dev_mock_fallback_active",
+                hint="set ANTHROPIC_API_KEY and/or GOOGLE_API_KEY for real LLM",
+            )
+            dev_chains: dict[Complexity, list[str]] = {
+                "standard": ["mock-flash"],
+                "complex": ["mock-sonnet"],
+            }
+            return Router(providers=providers, chains=dev_chains)
 
     chains: dict[Complexity, list[str]] = {
         "standard": ["gemini-flash", "claude-haiku"],
