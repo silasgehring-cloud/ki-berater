@@ -1,6 +1,8 @@
 # Lokales Dev-Setup
 
 Quick-Start fuer eigene Entwicklung + manuellen Test.
+**Kein Docker noetig** — embedded Postgres via `pgserver`,
+In-Memory Qdrant + Rate-Limit.
 
 ---
 
@@ -9,55 +11,45 @@ Quick-Start fuer eigene Entwicklung + manuellen Test.
 | Tool | Wofuer | Installation |
 |---|---|---|
 | **Python 3.12** | Backend | https://www.python.org/downloads/ (oder `winget install Python.Python.3.12`) |
-| **Docker Desktop** | Postgres + Redis + Qdrant | https://www.docker.com/products/docker-desktop/ |
 | **Local von Flywheel** | WordPress + WC zum Testen | https://localwp.com/ |
 | **Git** | Versionskontrolle | https://git-scm.com/download/win |
 | **Google AI Studio Key** | Echte LLM-Antworten | https://aistudio.google.com/ — gratis |
 
-Optional aber empfohlen:
+Optional:
 - **Visual Studio Code** mit Python + PHP-Extensions
-- **TablePlus** o.ä. fuer Postgres-Inspection
+- **TablePlus** / pgAdmin fuer Postgres-Inspection
 
 ---
 
-## Backend hochfahren (5 Befehle)
+## Backend hochfahren
 
+**Doppelklick auf `start-dev.bat`** im Projekt-Root. Das macht alles:
+1. `.env` aus `.env.example` kopieren falls fehlt
+2. `ADMIN_API_KEY` auto-generieren falls leer
+3. Embedded Postgres bootet (erstes Mal: ~50 MB Binary-Download)
+4. Alembic-Migrationen laufen
+5. uvicorn startet auf `http://localhost:8000`
+
+Daten persistieren in `.pgsrv/` (gitignored). Ctrl+C im Fenster beendet
+alles sauber.
+
+Manuell ohne Bat-Datei:
 ```bash
 cd D:/Cloude/WCommerce
-
-# 1. .env aus Template
-cp .env.example .env
-
-# 2. ADMIN_API_KEY in .env eintragen — z.B. mit:
-openssl rand -hex 32
-# Output kopieren, in .env: ADMIN_API_KEY=<output>
-
-# 3. Optional: GOOGLE_API_KEY in .env eintragen
-# (ohne Key: Backend nutzt Mock-Provider als Dev-Fallback)
-
-# 4. Services starten (Postgres + Redis + Qdrant)
-docker compose up -d
-
-# 5. DB-Schema migrieren
-cd backend && alembic upgrade head && cd ..
-
-# 6. Backend starten
-.venv/Scripts/uvicorn.exe backend.main:app --reload --host 0.0.0.0 --port 8000
+.venv/Scripts/python.exe scripts/dev_server.py
 ```
 
-Backend laeuft auf http://localhost:8000
-
-Verifikation:
+Verifikation in einem zweiten Terminal:
 ```bash
 curl http://localhost:8000/health     # → {"status":"ok"}
-curl http://localhost:8000/ready      # → JSON mit Postgres/Redis/Qdrant-Status
+curl http://localhost:8000/ready      # → Postgres+Qdrant ok, Redis "skipped"
 ```
 
 ---
 
 ## Test-Shop anlegen
 
-In einem neuen Terminal (Backend laeuft weiter):
+In einem neuen Git-Bash-Terminal (Backend laeuft weiter):
 
 ```bash
 cd D:/Cloude/WCommerce
@@ -66,19 +58,6 @@ bash scripts/create-test-shop.sh
 
 Skript liest `ADMIN_API_KEY` aus `.env`, fragt nach Shop-Domain, legt
 Shop an und schreibt API-Key + Webhook-Secret in `.local-shop` (gitignored).
-
-Output:
-```
-============================================
-  Shop angelegt:
-============================================
-  Domain:         ki-berater-test.local
-  Plan:           starter
-  ...
-  API-Key:        abc123...
-  Webhook-Secret: deadbeef...
-============================================
-```
 
 ---
 
@@ -97,6 +76,16 @@ sind sofort live im Browser (Junction → Refresh reicht).
 
 ---
 
+## Reset / Aufraeumen
+
+| Zweck | Befehl |
+|---|---|
+| Backend stoppen | Ctrl+C im start-dev-Fenster |
+| Datenbank wegwerfen + neu starten | Doppelklick `reset-dev.bat` |
+| Cache-/Log-Dateien aufraeumen | `rm -rf .ruff_cache .mypy_cache .pytest_cache` |
+
+---
+
 ## Tests laufen lassen
 
 ```bash
@@ -105,30 +94,24 @@ sind sofort live im Browser (Junction → Refresh reicht).
 .venv/Scripts/mypy.exe backend
 ```
 
----
-
-## Logs anschauen
-
-```bash
-# Backend (in dem Terminal wo uvicorn laeuft, kommen die strukturierten Logs)
-# Oder Backend-Logs in Datei + tail:
-.venv/Scripts/uvicorn.exe backend.main:app --reload > backend.log 2>&1 &
-tail -f backend.log
-
-# Docker-Services
-docker compose logs -f postgres
-docker compose logs -f redis
-docker compose logs -f qdrant
-```
+Tests booten ihr eigenes pgserver — `start-dev.bat` muss nicht laufen.
 
 ---
 
 ## Postgres direkt anschauen
 
-```bash
-docker compose exec postgres psql -U ki -d ki
+`pgserver` hat keinen `psql`-Wrapper. Verbindungs-URL aus dem
+`start-dev.bat`-Fenster ablesen (Format `127.0.0.1:PORT/postgres`),
+dann mit beliebigem Postgres-Client (TablePlus, pgAdmin, DBeaver) verbinden:
 
-# Beispiel-Queries:
+- Host: `127.0.0.1`
+- Port: aus dem Log
+- DB:   `postgres`
+- User: `postgres`
+- Password: leer
+
+Beispiel-Queries:
+```sql
 SELECT count(*) FROM products;
 SELECT id, domain, plan FROM shops;
 SELECT shop_id, model, sum(cost_eur) FROM llm_usage GROUP BY 1,2;
@@ -139,41 +122,36 @@ SELECT * FROM product_clicks ORDER BY clicked_at DESC LIMIT 10;
 
 ## Haeufige Stolpersteine
 
-**`docker compose up` schlaegt fehl: "Cannot connect to the Docker daemon"**
-→ Docker Desktop ist nicht gestartet. Tray-Icon checken.
+**`start-dev.bat` haengt bei "Boote embedded Postgres"**
+→ Erster Run laedt ~50 MB Binaries herunter. Bei langsamer Internetverbindung
+kann das mehrere Minuten dauern. Im Hintergrund laeuft `pgserver` weiter.
 
-**`alembic upgrade head` schlaegt fehl: "could not connect to server"**
-→ Postgres-Container ist noch nicht ready. `docker compose ps` —
-warten bis Postgres "healthy" zeigt, dann nochmal.
+**`/ready` zeigt Redis als "skipped"**
+→ Korrekt — wir nutzen In-Memory-Rate-Limit im Dev-Mode.
 
 **Backend startet, aber `/ready` zeigt Postgres als "fail"**
-→ `DATABASE_URL` in `.env` falsch. Default ist
-`postgresql+asyncpg://ki:ki@localhost:5432/ki` — sollte mit dem
-docker-compose.yml uebereinstimmen.
+→ pgserver konnte nicht starten. `reset-dev.bat` ausfuehren um `.pgsrv/`
+zu loeschen, dann `start-dev.bat` neu.
 
 **Plugin-Verbindungstest in WP "Auth fehlgeschlagen"**
 → API-Key falsch eingegeben. Vergleichen mit `.local-shop`.
 
 **Plugin-Verbindungstest "CORS-Error"**
 → Shop-Domain im POST `/v1/shops`-Call passt nicht zur Local-Site-Domain.
-Direkt-Update:
-```bash
-docker compose exec postgres psql -U ki -d ki \
-  -c "UPDATE shops SET domain='<korrekte-domain>.local' WHERE id='<shop-id>'"
-```
-Dann 60 s warten (CORS-Cache).
+Test-Shop neu anlegen mit korrekter Domain.
 
 **Chat antwortet nicht**
-→ Backend-Logs checken. Ohne `GOOGLE_API_KEY`/`ANTHROPIC_API_KEY` in
-`.env` faellt der Backend auf den Mock-Provider zurueck — du siehst
-dann eine immer-gleiche Beispielantwort. Fuer echte Antworten: API-Key
-besorgen.
+→ Backend-Logs (im `start-dev`-Fenster) checken. Ohne `GOOGLE_API_KEY` /
+`ANTHROPIC_API_KEY` in `.env` faellt der Backend auf den Mock-Provider
+zurueck — du siehst dann eine immer-gleiche Beispielantwort. Fuer echte
+Antworten: API-Key in `.env`, dann Backend neu starten.
 
 ---
 
 ## Was nach dem lokalen Test kommt
 
 Siehe [DEPLOY.md](DEPLOY.md) fuer Hetzner-Cloud-Deployment der
-Production-Variante, [BILLING_SETUP.md](BILLING_SETUP.md) fuer
-Stripe-Konfiguration, [PLUGIN_DISTRIBUTION.md](PLUGIN_DISTRIBUTION.md)
+Production-Variante (dort wird Docker fuer Multi-Container-Deployment
+verwendet — lokal nicht noetig). [BILLING_SETUP.md](BILLING_SETUP.md)
+fuer Stripe-Konfiguration, [PLUGIN_DISTRIBUTION.md](PLUGIN_DISTRIBUTION.md)
 fuer GitHub-Releases als Update-Server.

@@ -51,6 +51,9 @@ postgres_data/
 redis_data/
 qdrant_data/
 
+# Embedded-Postgres (pgserver) Daten fuer Dev ohne Docker
+.pgsrv/
+
 # Logs
 *.log
 logs/

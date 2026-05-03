@@ -1,13 +1,8 @@
 @echo off
 setlocal
 
-REM Hard-Reset: Stoppt alles + loescht Volumes (Postgres-Daten, Redis-Daten,
-REM Qdrant-Daten). Danach hat der naechste start-dev.bat eine frische DB.
-REM
-REM Brauchst du wenn:
-REM   - DB-Schema kaputt nach fehlerhafter Migration
-REM   - Test-Daten weg-werfen vor neuem Test-Lauf
-REM   - "irgendwas in Docker laeuft komisch"
+REM Hard-Reset: Loescht .pgsrv/ (Postgres-Daten) und .local-shop.
+REM Naechster start-dev.bat startet mit frischer DB.
 
 cd /d "%~dp0"
 
@@ -15,10 +10,13 @@ echo ============================================
 echo   KI-Berater - HARD RESET (Daten weg!)
 echo ============================================
 echo.
-echo Das loescht ALLE lokalen Daten:
-echo   - Postgres ^(shops, conversations, products, ...^)
-echo   - Redis-Cache
-echo   - Qdrant-Vektoren
+echo Das loescht:
+echo   - .pgsrv\        (alle Postgres-Daten: shops, conversations, products)
+echo   - .local-shop    (gespeicherter Test-Shop-API-Key)
+echo.
+echo NICHT geloescht:
+echo   - .env           (deine Konfiguration)
+echo   - venv/Plugin    (Code bleibt)
 echo.
 
 set /p CONFIRM=Wirklich ALLES loeschen [j/N]?
@@ -28,29 +26,25 @@ if /i not "%CONFIRM%"=="j" (
     exit /b 0
 )
 
-where docker 1>NUL 2>NUL
-if errorlevel 1 (
-    echo FEHLER: Docker nicht im PATH.
-    pause
-    exit /b 1
-)
-
 echo.
-echo --- docker compose down -v (loescht Volumes) ---
-docker compose down -v
-if errorlevel 1 (
-    echo FEHLER beim docker compose down.
-    pause
-    exit /b 1
-)
-
+echo Stelle sicher dass start-dev.bat nicht mehr laeuft ^(Ctrl+C dort^).
 echo.
-echo --- Loesche .local-shop ^(falls vorhanden^) ---
-if exist .local-shop (
-    del .local-shop
-    echo .local-shop geloescht.
+timeout /t 2 /nobreak >NUL
+
+if exist .pgsrv (
+    echo Loesche .pgsrv\ ...
+    rmdir /S /Q .pgsrv
+    echo OK
 ) else (
-    echo .local-shop nicht vorhanden.
+    echo .pgsrv\ nicht vorhanden, ueberspringe.
+)
+
+if exist .local-shop (
+    echo Loesche .local-shop ...
+    del .local-shop
+    echo OK
+) else (
+    echo .local-shop nicht vorhanden, ueberspringe.
 )
 
 echo.

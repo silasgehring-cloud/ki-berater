@@ -45,24 +45,15 @@ ki-berater/
 
 ## Quick-Start
 
-Detaillierte Anleitung: **[LOCAL_SETUP.md](LOCAL_SETUP.md)**
+Detaillierte Anleitung: **[LOCAL_SETUP.md](LOCAL_SETUP.md)** — kein Docker nötig.
 
-```bash
-# 1. Backend
-cp .env.example .env
-# .env: ADMIN_API_KEY und (optional) GOOGLE_API_KEY setzen
-docker compose up -d
-cd backend && alembic upgrade head && cd ..
-.venv/Scripts/uvicorn.exe backend.main:app --reload
-
-# 2. Test-Shop
-bash scripts/create-test-shop.sh
-
-# 3. Plugin in WordPress
-# - Local von Flywheel: Site provisionieren
-# - Doppelklick auf link-plugin-to-wp.bat
-# - WP-Admin → Plugins → KI-Verkaufsberater → Aktivieren
-# - Settings füllen mit Werten aus .local-shop
+```text
+1. Doppelklick start-dev.bat        → Backend (embedded Postgres) läuft
+2. bash scripts/create-test-shop.sh → API-Key + Webhook-Secret in .local-shop
+3. Local von Flywheel: Site provisionieren
+4. Doppelklick link-plugin-to-wp.bat → Site-Name → Junction
+5. WP-Admin → Plugin aktivieren → Settings füllen → "Verbindung testen"
+6. Frontend → Chat-Bubble → fragen → KI antwortet
 ```
 
 Ohne `GOOGLE_API_KEY` läuft das Backend in Dev mit einem Mock-Provider —
