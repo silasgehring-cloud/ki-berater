@@ -252,31 +252,41 @@ final class Settings {
 				<button type="button" class="button button-secondary" id="kib-test-connection">
 					<?php esc_html_e( 'Verbindung testen', 'ki-berater' ); ?>
 				</button>
-				<button type="button" class="button button-primary" id="kib-bulk-sync" style="margin-left:8px;">
-					<?php esc_html_e( 'Alle Produkte synchronisieren', 'ki-berater' ); ?>
-				</button>
+				<?php if ( Plugin::has_woocommerce() ) : ?>
+					<button type="button" class="button button-primary" id="kib-bulk-sync" style="margin-left:8px;">
+						<?php esc_html_e( 'Alle Produkte synchronisieren', 'ki-berater' ); ?>
+					</button>
+				<?php endif; ?>
 				<span id="kib-status-msg" class="kib-status-msg" aria-live="polite"></span>
 			</p>
 
-			<hr>
-			<h2><?php esc_html_e( 'Letzte 30 Tage', 'ki-berater' ); ?></h2>
-			<p class="description">
-				<?php esc_html_e( 'Bestellungen aus Chat-Sessions (Cookie-basiert, 30-Tage-Attribution).', 'ki-berater' ); ?>
-			</p>
-			<table class="widefat striped kib-overview" id="kib-overview-table">
-				<tbody>
-					<tr><th><?php esc_html_e( 'Gespräche', 'ki-berater' ); ?></th>
-						<td id="kib-stat-total">–</td></tr>
-					<tr><th><?php esc_html_e( 'Conversions', 'ki-berater' ); ?></th>
-						<td id="kib-stat-converted">–</td></tr>
-					<tr><th><?php esc_html_e( 'Conversion-Rate', 'ki-berater' ); ?></th>
-						<td id="kib-stat-rate">–</td></tr>
-					<tr><th><?php esc_html_e( 'Umsatz', 'ki-berater' ); ?></th>
-						<td id="kib-stat-revenue">–</td></tr>
-					<tr><th><?php esc_html_e( 'LLM-Kosten', 'ki-berater' ); ?></th>
-						<td id="kib-stat-llm">–</td></tr>
-				</tbody>
-			</table>
+			<?php if ( ! Plugin::has_woocommerce() ) : ?>
+				<p class="description" style="margin-top:12px;">
+					<em><?php esc_html_e( 'Hinweis: WooCommerce ist nicht aktiv. Produkt-Sync und Conversion-Tracking sind deaktiviert. Der Chat funktioniert weiterhin ohne Produkt-Kontext.', 'ki-berater' ); ?></em>
+				</p>
+			<?php endif; ?>
+
+			<?php if ( Plugin::has_woocommerce() ) : ?>
+				<hr>
+				<h2><?php esc_html_e( 'Letzte 30 Tage', 'ki-berater' ); ?></h2>
+				<p class="description">
+					<?php esc_html_e( 'Bestellungen aus Chat-Sessions (Cookie-basiert, 30-Tage-Attribution).', 'ki-berater' ); ?>
+				</p>
+				<table class="widefat striped kib-overview" id="kib-overview-table">
+					<tbody>
+						<tr><th><?php esc_html_e( 'Gespräche', 'ki-berater' ); ?></th>
+							<td id="kib-stat-total">–</td></tr>
+						<tr><th><?php esc_html_e( 'Conversions', 'ki-berater' ); ?></th>
+							<td id="kib-stat-converted">–</td></tr>
+						<tr><th><?php esc_html_e( 'Conversion-Rate', 'ki-berater' ); ?></th>
+							<td id="kib-stat-rate">–</td></tr>
+						<tr><th><?php esc_html_e( 'Umsatz', 'ki-berater' ); ?></th>
+							<td id="kib-stat-revenue">–</td></tr>
+						<tr><th><?php esc_html_e( 'LLM-Kosten', 'ki-berater' ); ?></th>
+							<td id="kib-stat-llm">–</td></tr>
+					</tbody>
+				</table>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       KI-Verkaufsberater
  * Plugin URI:        https://ki-berater.de
- * Description:       KI-Chatbot für WooCommerce-Shops. Berät Endkunden auf Basis des Produktkatalogs.
- * Version:           0.2.0
+ * Description:       KI-Chatbot fuer WordPress. Mit WooCommerce: Berater auf Basis des Produktkatalogs. Ohne WC: generischer Chat-Bot.
+ * Version:           0.3.0
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            KI-Berater
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const KIB_VERSION       = '0.2.0';
+const KIB_VERSION       = '0.3.0';
 const KIB_MIN_PHP       = '8.0';
 const KIB_PLUGIN_FILE   = __FILE__;
 define( 'KIB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

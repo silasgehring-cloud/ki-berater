@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo-Shop · KI-Berater</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../plugin/ki-berater/assets/css/widget.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <span class="topbar__brand">DemoShop</span>
+      <nav class="topbar__nav">
+        <a href="#produkte" class="topbar__nav-link">Produkte</a>
+        <a href="#" class="topbar__nav-link">Über uns</a>
+        <a href="#" class="topbar__nav-link">Kontakt</a>
+      </nav>
+      <div class="topbar__cart">🛒 <span>0</span></div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <h1>Premium Outdoor-Ausrüstung</h1>
+      <p>Trail. Berg. Stadt. Alles was du brauchst.</p>
+      <p class="hero__hint">→ Klick unten rechts auf den Chat — die KI berät dich live.</p>
+    </section>
+
+    <section id="produkte" class="grid">
+      <article class="product">
+        <div class="product__img">PRODUKT</div>
+        <h2>Trail Master 3000</h2>
+        <p class="product__cat">Schuhe · Trail</p>
+        <p class="product__price">129,00 €</p>
+        <button class="product__buy">In den Warenkorb</button>
+      </article>
+      <article class="product">
+        <div class="product__img">PRODUKT</div>
+        <h2>Cloud Runner</h2>
+        <p class="product__cat">Schuhe · Straße</p>
+        <p class="product__price">89,90 €</p>
+        <button class="product__buy">In den Warenkorb</button>
+      </article>
+      <article class="product">
+        <div class="product__img">PRODUKT</div>
+        <h2>Storm Shell</h2>
+        <p class="product__cat">Jacken · Wasserdicht</p>
+        <p class="product__price">189,00 €</p>
+        <button class="product__buy">In den Warenkorb</button>
+      </article>
+      <article class="product">
+        <div class="product__img">PRODUKT</div>
+        <h2>Light Beanie</h2>
+        <p class="product__cat">Mützen</p>
+        <p class="product__price">19,90 €</p>
+        <button class="product__buy">In den Warenkorb</button>
+      </article>
+      <article class="product">
+        <div class="product__img">PRODUKT</div>
+        <h2>Alpine Daypack 25L</h2>
+        <p class="product__cat">Rucksäcke</p>
+        <p class="product__price">99,00 €</p>
+        <button class="product__buy">In den Warenkorb</button>
+      </article>
+      <article class="product">
+        <div class="product__img">PRODUKT</div>
+        <h2>Merino Base-Layer</h2>
+        <p class="product__cat">Funktionswäsche</p>
+        <p class="product__price">59,00 €</p>
+        <button class="product__buy">In den Warenkorb</button>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Demo-Shop für KI-Verkaufsberater · Keine echte Bestellabwicklung</p>
+  </footer>
+
+  <!-- Chat-Widget -->
+  <div id="kib-widget-root"></div>
+  <!-- Per-User Konfig: liegt in config.js (gitignored). -->
+  <!-- start-demo.bat generiert die Datei aus .local-shop. -->
+  <script src="config.js"></script>
+  <script src="../plugin/ki-berater/assets/js/widget.js"></script>
+</body>
+</html>
