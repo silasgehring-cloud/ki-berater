@@ -71,14 +71,38 @@
     }
   }
 
+  // ---- branding (per-shop, from KIB_WIDGET) ----
+  const brandName = (cfg.brandName || 'WoCom').slice(0, 32);
+  const brandInitial = brandName.charAt(0).toUpperCase() || 'W';
+  const greeting = cfg.greeting || (i18n.greeting || 'Looking for something specific? Happy to help.');
+  const primaryColor = (typeof cfg.primaryColor === 'string'
+    && /^#[0-9a-fA-F]{6}$/.test(cfg.primaryColor))
+    ? cfg.primaryColor : '#7c3aed';
+  // Slightly darker for hover — naive shade; good enough since input is locked to 6-char hex.
+  const primaryHover = shadeHex(primaryColor, -12);
+
+  function shadeHex(hex, percent) {
+    const num = parseInt(hex.slice(1), 16);
+    const amt = Math.round(2.55 * percent);
+    let r = (num >> 16) + amt;
+    let g = ((num >> 8) & 0xff) + amt;
+    let b = (num & 0xff) + amt;
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+  }
+
   // ---- state ----
   const visitorId = getOrCreate(STORAGE_VISITOR, uuid);
 
   // ---- markup ----
   const widget = el('div', 'kib-widget');
+  widget.style.setProperty('--kib-primary', primaryColor);
+  widget.style.setProperty('--kib-primary-hover', primaryHover);
 
   const bubble = el('button', 'kib-widget__bubble');
-  bubble.setAttribute('aria-label', i18n.open || 'Open chat');
+  bubble.setAttribute('aria-label', i18n.open || 'Chat oeffnen');
   bubble.innerHTML =
     '<svg viewBox="0 0 24 24" aria-hidden="true">' +
     '<path d="M12 3C6.48 3 2 6.92 2 11.5c0 2.04.91 3.92 2.43 5.36L3 21l4.45-1.4C8.78 20.5 10.34 21 12 21c5.52 0 10-3.92 10-9.5S17.52 3 12 3z"/>' +
@@ -86,10 +110,23 @@
 
   const panel = el('div', 'kib-widget__panel');
 
+  // Header: Avatar + Brand-Name + "Online · …"
   const header = el('div', 'kib-widget__header');
-  header.appendChild(el('span', null, 'KI-Verkaufsberater'));
+  const avatar = el('div', 'kib-widget__avatar');
+  avatar.textContent = brandInitial;
+  header.appendChild(avatar);
+
+  const brand = el('div', 'kib-widget__brand');
+  brand.appendChild(el('div', 'kib-widget__brand-name', brandName));
+  const status = el('div', 'kib-widget__brand-status');
+  status.appendChild(el('span', 'kib-widget__online-dot'));
+  status.appendChild(document.createTextNode(' '));
+  status.appendChild(document.createTextNode(i18n.status || 'Online · antwortet sofort'));
+  brand.appendChild(status);
+  header.appendChild(brand);
+
   const closeBtn = el('button', 'kib-widget__close');
-  closeBtn.setAttribute('aria-label', i18n.close || 'Close');
+  closeBtn.setAttribute('aria-label', i18n.close || 'Schliessen');
   closeBtn.textContent = '×';
   header.appendChild(closeBtn);
   panel.appendChild(header);
@@ -100,13 +137,18 @@
   const form = el('form', 'kib-widget__form');
   const input = el('input', 'kib-widget__input');
   input.type = 'text';
-  input.placeholder = i18n.placeholder || 'Ask…';
+  input.placeholder = i18n.placeholder || 'Antworten…';
   input.required = true;
   input.maxLength = 4000;
   form.appendChild(input);
+
   const sendBtn = el('button', 'kib-widget__send');
   sendBtn.type = 'submit';
-  sendBtn.textContent = i18n.send || 'Send';
+  sendBtn.setAttribute('aria-label', i18n.send || 'Senden');
+  sendBtn.innerHTML =
+    '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+    '<path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(-90 12 12)"/>' +
+    '</svg>';
   form.appendChild(sendBtn);
   panel.appendChild(form);
 
@@ -118,7 +160,7 @@
   function open() {
     widget.classList.add('kib-widget--open');
     if (messages.children.length === 0) {
-      addAssistantMessage(i18n.greeting || 'Hi! How can I help?');
+      addAssistantMessage(greeting);
     }
     setTimeout(function () { input.focus(); }, 50);
   }

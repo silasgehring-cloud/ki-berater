@@ -4,7 +4,7 @@ Tags: woocommerce, ai, chatbot, sales, advisor
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,11 @@ Ein aktives Abo unter https://ki-berater.de wird benötigt.
 5. Fertig — der Chat erscheint im Shop-Frontend.
 
 == Changelog ==
+
+= 0.2.0 =
+* Widget-Redesign: Header mit Avatar + Brand-Name + Online-Status, weisser Hintergrund, runder Send-Button.
+* Branding-Settings: Brand-Name, Begruessungstext, Primaerfarbe pro Shop konfigurierbar.
+* Color-Picker im WP-Admin via wp-color-picker.
 
 = 0.1.0 =
 * Initial release: Settings-Page, Chat-Widget, Produkt-Sync via Webhook + Bulk.

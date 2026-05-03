@@ -70,16 +70,61 @@ final class Settings {
 				'default'           => '1',
 			)
 		);
+
+		// Branding fields (Sprint 4.x widget redesign).
+		register_setting(
+			'kib_settings',
+			'kib_brand_name',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => array( $this, 'sanitize_brand_name' ),
+				'default'           => 'WoCom',
+			)
+		);
+		register_setting(
+			'kib_settings',
+			'kib_greeting',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => array( $this, 'sanitize_greeting' ),
+				'default'           => 'Looking for something specific? Happy to help.',
+			)
+		);
+		register_setting(
+			'kib_settings',
+			'kib_primary_color',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => array( $this, 'sanitize_hex_color' ),
+				'default'           => '#7c3aed',
+			)
+		);
 	}
 
 	public function sanitize_bool( mixed $value ): string {
 		return $value ? '1' : '0';
 	}
 
+	public function sanitize_brand_name( mixed $value ): string {
+		$s = sanitize_text_field( (string) $value );
+		return mb_substr( $s, 0, 32 );
+	}
+
+	public function sanitize_greeting( mixed $value ): string {
+		$s = sanitize_textarea_field( (string) $value );
+		return mb_substr( $s, 0, 200 );
+	}
+
+	public function sanitize_hex_color( mixed $value ): string {
+		$s = (string) $value;
+		return ( 1 === preg_match( '/^#[0-9a-fA-F]{6}$/', $s ) ) ? $s : '#7c3aed';
+	}
+
 	public function enqueue_admin_assets( string $hook ): void {
 		if ( 'settings_page_' . self::MENU_SLUG !== $hook ) {
 			return;
 		}
+		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_style(
 			'kib-admin',
 			KIB_PLUGIN_URL . 'assets/css/admin.css',
@@ -89,7 +134,7 @@ final class Settings {
 		wp_enqueue_script(
 			'kib-admin',
 			KIB_PLUGIN_URL . 'assets/js/admin.js',
-			array(),
+			array( 'jquery', 'wp-color-picker' ),
 			KIB_VERSION,
 			true
 		);
@@ -116,10 +161,13 @@ final class Settings {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_die( esc_html__( 'Zugriff verweigert.', 'ki-berater' ) );
 		}
-		$backend  = (string) get_option( 'kib_backend_url', 'http://localhost:8000' );
-		$api_key  = (string) get_option( 'kib_api_key', '' );
-		$secret   = (string) get_option( 'kib_webhook_secret', '' );
-		$enabled  = '1' === (string) get_option( 'kib_widget_enabled', '1' );
+		$backend       = (string) get_option( 'kib_backend_url', 'http://localhost:8000' );
+		$api_key       = (string) get_option( 'kib_api_key', '' );
+		$secret        = (string) get_option( 'kib_webhook_secret', '' );
+		$enabled       = '1' === (string) get_option( 'kib_widget_enabled', '1' );
+		$brand_name    = (string) get_option( 'kib_brand_name', 'WoCom' );
+		$greeting      = (string) get_option( 'kib_greeting', 'Looking for something specific? Happy to help.' );
+		$primary_color = (string) get_option( 'kib_primary_color', '#7c3aed' );
 
 		// Mask secrets so they aren't shoulder-surfed on the settings page.
 		$api_key_display = '' === $api_key ? '' : substr( $api_key, 0, 6 ) . str_repeat( '•', 16 );
@@ -165,6 +213,36 @@ final class Settings {
 						</td>
 					</tr>
 				</table>
+
+				<h2 style="margin-top:24px;"><?php esc_html_e( 'Widget-Branding', 'ki-berater' ); ?></h2>
+				<table class="form-table">
+					<tr>
+						<th><label for="kib_brand_name"><?php esc_html_e( 'Brand-Name', 'ki-berater' ); ?></label></th>
+						<td>
+							<input type="text" id="kib_brand_name" name="kib_brand_name" class="regular-text"
+								value="<?php echo esc_attr( $brand_name ); ?>" maxlength="32">
+							<p class="description"><?php esc_html_e( 'Name im Chat-Header. Erstes Zeichen wird als Avatar-Initial verwendet.', 'ki-berater' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="kib_greeting"><?php esc_html_e( 'Begruessungstext', 'ki-berater' ); ?></label></th>
+						<td>
+							<textarea id="kib_greeting" name="kib_greeting" class="large-text"
+								rows="2" maxlength="200"><?php echo esc_textarea( $greeting ); ?></textarea>
+							<p class="description"><?php esc_html_e( 'Erste Nachricht beim OEffnen des Widgets.', 'ki-berater' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="kib_primary_color"><?php esc_html_e( 'Primaerfarbe', 'ki-berater' ); ?></label></th>
+						<td>
+							<input type="text" id="kib_primary_color" name="kib_primary_color"
+								class="kib-color-picker" data-default-color="#7c3aed"
+								value="<?php echo esc_attr( $primary_color ); ?>">
+							<p class="description"><?php esc_html_e( 'Floating-Bubble, Send-Button, Akzent-Highlights.', 'ki-berater' ); ?></p>
+						</td>
+					</tr>
+				</table>
+
 				<?php submit_button(); ?>
 			</form>
 

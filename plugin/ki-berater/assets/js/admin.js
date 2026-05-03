@@ -4,6 +4,13 @@
   const cfg = window.KIB_ADMIN || {};
   const i18n = cfg.i18n || {};
 
+  // wp-color-picker init (jQuery is bundled with WP-Admin).
+  if (typeof window.jQuery !== 'undefined' && typeof window.jQuery.fn.wpColorPicker === 'function') {
+    window.jQuery(function ($) {
+      $('.kib-color-picker').wpColorPicker();
+    });
+  }
+
   const $msg = document.getElementById('kib-status-msg');
   const $test = document.getElementById('kib-test-connection');
   const $bulk = document.getElementById('kib-bulk-sync');

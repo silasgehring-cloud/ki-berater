@@ -40,16 +40,22 @@ final class Widget {
 			'kib-widget',
 			'KIB_WIDGET',
 			array(
-				'backendUrl' => API_Client::backend_url(),
-				'apiKey'     => API_Client::api_key(),
-				'i18n'       => array(
+				'backendUrl'   => API_Client::backend_url(),
+				'apiKey'       => API_Client::api_key(),
+				'brandName'    => (string) get_option( 'kib_brand_name', 'WoCom' ),
+				'greeting'     => (string) get_option(
+					'kib_greeting',
+					'Looking for something specific? Happy to help.'
+				),
+				'primaryColor' => (string) get_option( 'kib_primary_color', '#7c3aed' ),
+				'i18n'         => array(
 					'open'        => __( 'Beratung starten', 'ki-berater' ),
 					'close'       => __( 'Schließen', 'ki-berater' ),
-					'placeholder' => __( 'Frage stellen…', 'ki-berater' ),
+					'placeholder' => __( 'Antworten…', 'ki-berater' ),
 					'send'        => __( 'Senden', 'ki-berater' ),
 					'thinking'    => __( 'Berater denkt nach…', 'ki-berater' ),
 					'error'       => __( 'Es ist ein Fehler aufgetreten.', 'ki-berater' ),
-					'greeting'    => __( 'Hallo! Wonach suchst du heute?', 'ki-berater' ),
+					'status'      => __( 'Online · antwortet sofort', 'ki-berater' ),
 				),
 			)
 		);
