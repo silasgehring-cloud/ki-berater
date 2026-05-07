@@ -1,0 +1,386 @@
+/* KI-Berater Admin UI - reuses the Klarmacher design language. */
+
+:root {
+  --bg: #f5f3ee;
+  --bg-card: #ffffff;
+  --bg-soft: #ebe8e1;
+  --ink: #1a1916;
+  --ink-2: #3d3a35;
+  --ink-3: #6b6862;
+  --ink-4: #98948c;
+  --line: #d9d5cc;
+  --line-soft: #e8e4db;
+  --accent: oklch(0.62 0.10 155);
+  --accent-soft: oklch(0.92 0.04 155);
+  --accent-deep: oklch(0.40 0.08 155);
+  --warn: oklch(0.65 0.14 60);
+  --err: oklch(0.55 0.18 25);
+
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 14px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--accent-deep); }
+
+h1, h2, h3, h4 { font-weight: 500; letter-spacing: -0.02em; margin: 0; }
+.serif { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+.mono { font-family: var(--font-mono); }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- Layout ---------- */
+.app {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+.sidebar {
+  background: var(--ink);
+  color: rgba(255,255,255,0.85);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.sidebar .brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+}
+.sidebar .brand .mark {
+  width: 24px; height: 24px;
+  background: #fff; color: var(--ink);
+  border-radius: 5px;
+  font-family: var(--font-display); font-style: italic;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  font-size: 14px;
+}
+.sidebar .brand .mark::after {
+  content: ""; position: absolute; bottom: 3px; right: 3px;
+  width: 4px; height: 4px; border-radius: 100px; background: var(--accent);
+}
+.sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+.sidebar nav a {
+  color: rgba(255,255,255,0.7);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  display: flex; align-items: center; gap: 10px;
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.sidebar nav a.active { background: rgba(255,255,255,0.10); color: #fff; }
+.sidebar .spacer { flex: 1; }
+.sidebar .logout {
+  border: none; background: transparent;
+  color: rgba(255,255,255,0.5); font-family: inherit;
+  cursor: pointer; padding: 6px 12px; font-size: 12px;
+  text-align: left;
+}
+.sidebar .logout:hover { color: #fff; }
+
+.main {
+  padding: 32px 40px 64px;
+  max-width: 1280px;
+}
+.page-header {
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.page-header h1 {
+  font-size: 32px;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+}
+.page-header .sub { color: var(--ink-3); font-size: 14px; margin-top: 6px; }
+
+/* ---------- Tiles / cards ---------- */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.tile {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+}
+.tile .label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.tile .value {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.tile .value.accent { color: var(--accent); }
+.tile .note {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 8px;
+}
+
+/* ---------- Tables ---------- */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.card .card-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line-soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card .card-head h2 {
+  font-size: 16px;
+  font-weight: 500;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+th, td {
+  padding: 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--line-soft);
+}
+th {
+  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--bg-soft);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg-soft); }
+td.mono { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.12s, border-color 0.12s;
+}
+.btn-primary { background: var(--ink); color: var(--bg); }
+.btn-primary:hover { background: #2a2925; }
+.btn-secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-secondary:hover { border-color: var(--ink-3); }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: var(--accent-deep); }
+.btn-danger { background: transparent; color: var(--err); border-color: var(--line); }
+.btn-danger:hover { border-color: var(--err); }
+
+/* ---------- Form ---------- */
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+input[type="text"], input[type="password"], input[type="email"], select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--ink);
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--ink-3);
+  box-shadow: 0 0 0 3px rgba(94, 138, 95, 0.15);
+}
+
+/* ---------- Pills ---------- */
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--bg-soft);
+  color: var(--ink-2);
+  border: 1px solid var(--line-soft);
+}
+.pill-ok { background: var(--accent-soft); color: var(--accent-deep); border-color: transparent; }
+.pill-warn { background: oklch(0.93 0.04 60); color: oklch(0.40 0.10 60); border-color: transparent; }
+.pill-err { background: oklch(0.93 0.05 25); color: oklch(0.40 0.12 25); border-color: transparent; }
+
+/* ---------- Login ---------- */
+.login-shell {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+  padding: 40px 20px;
+}
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+}
+.login-card .brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 18px;
+  margin-bottom: 32px;
+}
+.login-card .brand .mark {
+  width: 26px; height: 26px;
+  background: var(--ink); color: var(--bg);
+  border-radius: 6px;
+  font-family: var(--font-display); font-style: italic;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  font-size: 16px;
+}
+.login-card .brand .mark::after {
+  content: ""; position: absolute; bottom: 4px; right: 4px;
+  width: 4px; height: 4px; border-radius: 100px; background: var(--accent);
+}
+.login-card h1 {
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.login-card .sub {
+  font-size: 14px;
+  color: var(--ink-3);
+  margin-bottom: 24px;
+}
+.login-card .alert {
+  background: oklch(0.93 0.05 25);
+  color: oklch(0.40 0.12 25);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* ---------- Conversation thread ---------- */
+.thread { display: flex; flex-direction: column; gap: 12px; padding: 24px; }
+.msg { max-width: 70%; padding: 12px 16px; border-radius: 14px; font-size: 14px; line-height: 1.5; }
+.msg.user {
+  align-self: flex-end;
+  background: var(--ink); color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.msg.assistant {
+  align-self: flex-start;
+  background: var(--bg-card); color: var(--ink);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 4px;
+}
+.msg.system {
+  align-self: center;
+  background: var(--bg-soft); color: var(--ink-3);
+  font-family: var(--font-mono); font-size: 11px;
+  border-radius: 4px;
+}
+.msg .ts {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  opacity: 0.55;
+  margin-top: 4px;
+  display: block;
+}
+
+/* ---------- Inline copy field (for new shop output) ---------- */
+.copy-field {
+  display: flex; gap: 8px; align-items: center;
+  background: var(--bg-soft);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  word-break: break-all;
+}
+.copy-field button { font-size: 11px; padding: 4px 8px; }
+
+/* ---------- Health rows ---------- */
+.health-list {
+  list-style: none; padding: 0; margin: 0;
+}
+.health-list li {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line-soft);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.health-list li:last-child { border-bottom: none; }
+.health-list .name { flex: 1; font-weight: 500; font-size: 14px; }
+.health-list .meta { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); }
+
+/* ---------- Misc ---------- */
+.subtle { color: var(--ink-3); font-size: 13px; }
+.section-gap { margin-bottom: 32px; }
+.flex { display: flex; align-items: center; gap: 12px; }
+.flex.between { justify-content: space-between; }
+.empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 14px;
+  font-style: italic;
+}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Gespräch · KI-Berater Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="eyebrow">Conversation · {{ convo.id }}</div>
+  <h1>Gespräch in <span class="serif">{{ shop.domain }}</span></h1>
+  <div class="sub flex" style="gap: 16px;">
+    <span class="mono">{{ convo.started_at.strftime("%Y-%m-%d %H:%M") }}</span>
+    {% if convo.converted %}
+      <span class="pill pill-ok">konvertiert</span>
+      {% if convo.order_id %}<span class="mono subtle">Order: {{ convo.order_id }}</span>{% endif %}
+      {% if convo.order_total_eur %}<span>{{ "%.2f"|format(convo.order_total_eur) }} {{ convo.order_currency or "EUR" }}</span>{% endif %}
+      {% if convo.attribution_type %}<span class="pill {% if convo.attribution_type == 'strict' %}pill-ok{% endif %}">{{ convo.attribution_type }}</span>{% endif %}
+    {% else %}
+      <span class="pill">offen</span>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>{{ messages|length }} Nachrichten</h2>
+    <a href="/admin/shops/{{ shop.id }}" class="subtle">Zum Shop →</a>
+  </div>
+  {% if messages %}
+  <div class="thread">
+    {% for m in messages %}
+    <div class="msg {{ m.role }}">
+      {{ m.content|e }}
+      <span class="ts">{{ m.created_at.strftime("%H:%M:%S") }} · {{ m.role }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">Diese Conversation hat keine Nachrichten.</div>
+  {% endif %}
+</div>
+{% endblock %}

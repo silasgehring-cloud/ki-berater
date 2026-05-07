@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Login · KI-Berater Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/static/admin.css" />
+</head>
+<body>
+  <div class="login-shell">
+    <form class="login-card" method="post" action="/admin/login">
+      <div class="brand">
+        <span class="mark">k</span>
+        <span>KI-Berater</span>
+      </div>
+      <h1>Admin <span class="serif">Login</span></h1>
+      <div class="sub">Owner-Zugang. Token aus <span class="mono">.env</span> (ADMIN_API_KEY).</div>
+
+      {% if error %}
+      <div class="alert">{{ error }}</div>
+      {% endif %}
+
+      {% if not admin_key_set %}
+      <div class="alert">
+        Achtung: <span class="mono">ADMIN_API_KEY</span> ist in der <span class="mono">.env</span> nicht gesetzt.
+        Login geht erst nach Setup.
+      </div>
+      {% endif %}
+
+      <div class="field">
+        <label for="token">Admin-Token</label>
+        <input type="password" id="token" name="token" autocomplete="current-password" autofocus required />
+      </div>
+      <input type="hidden" name="next" value="{{ next or '/admin/' }}" />
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Anmelden</button>
+    </form>
+  </div>
+</body>
+</html>

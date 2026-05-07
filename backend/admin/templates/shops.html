@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Shops · KI-Berater Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="eyebrow">Shops</div>
+  <h1>Shops <span class="serif">verwalten</span></h1>
+  <div class="sub">{{ rows|length }} {{ "Shop" if rows|length == 1 else "Shops" }} insgesamt.</div>
+</div>
+
+<details class="card section-gap">
+  <summary style="padding: 16px 20px; cursor: pointer; font-weight: 500; display: flex; justify-content: space-between; align-items: center; list-style: none;">
+    <span>Neuen Shop anlegen</span>
+    <span class="subtle mono">+</span>
+  </summary>
+  <div style="padding: 0 20px 20px;">
+    <form id="shop-form" hx-post="/admin/shops" hx-target="#shop-result" hx-swap="innerHTML">
+      <div class="field">
+        <label for="domain">Shop-Domain</label>
+        <input type="text" id="domain" name="domain" placeholder="example-shop.com" required pattern="[a-zA-Z0-9.\-]+" />
+      </div>
+      <div class="field">
+        <label for="plan">Plan</label>
+        <select id="plan" name="plan">
+          <option value="starter">Starter</option>
+          <option value="growth">Growth</option>
+          <option value="pro">Pro</option>
+          <option value="enterprise">Enterprise</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Shop anlegen</button>
+    </form>
+    <div id="shop-result" style="margin-top: 16px;"></div>
+  </div>
+</details>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Alle Shops</h2>
+  </div>
+  {% if rows %}
+  <table>
+    <thead>
+      <tr>
+        <th>Domain</th>
+        <th>Plan</th>
+        <th>Abo</th>
+        <th>Key-Prefix</th>
+        <th class="num">Produkte</th>
+        <th class="num">Conv. 30T</th>
+        <th class="num">Umsatz 30T</th>
+        <th>Erstellt</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td><strong>{{ r.domain }}</strong></td>
+        <td>{{ r.plan }}</td>
+        <td>
+          {% if r.subscription_status == "active" %}
+            <span class="pill pill-ok">{{ r.subscription_status }}</span>
+          {% elif r.subscription_status == "past_due" %}
+            <span class="pill pill-warn">{{ r.subscription_status }}</span>
+          {% else %}
+            <span class="pill">{{ r.subscription_status }}</span>
+          {% endif %}
+        </td>
+        <td class="mono">{{ r.api_key_prefix }}…</td>
+        <td class="num">{{ r.products }}</td>
+        <td class="num">{{ r.conversations_30d }}</td>
+        <td class="num">{% if r.revenue_30d_eur > 0 %}{{ "%.2f"|format(r.revenue_30d_eur) }} €{% else %}—{% endif %}</td>
+        <td class="mono">{{ r.created_at.strftime("%Y-%m-%d") }}</td>
+        <td><a href="/admin/shops/{{ r.id }}" class="subtle">öffnen →</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">Noch keine Shops angelegt. Oben einen erstellen.</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Conversations · KI-Berater Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="eyebrow">Conversations</div>
+  <h1>Alle <span class="serif">Gespräche</span></h1>
+  <div class="sub">Letzte {{ rows|length }} angezeigt. Filter unten.</div>
+</div>
+
+<div class="card section-gap">
+  <div class="card-head">
+    <h2>Filter</h2>
+  </div>
+  <form method="get" action="/admin/conversations" style="padding: 16px 20px; display: flex; gap: 16px; align-items: end; flex-wrap: wrap;">
+    <div class="field" style="flex: 1; min-width: 200px; margin: 0;">
+      <label for="shop_id">Shop</label>
+      <select id="shop_id" name="shop_id">
+        <option value="">– alle –</option>
+        {% for s in shops %}
+          <option value="{{ s.id }}" {% if str_filters.shop_id == (s.id|string) %}selected{% endif %}>{{ s.domain }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field" style="flex: 0 0 180px; margin: 0;">
+      <label for="converted">Status</label>
+      <select id="converted" name="converted">
+        <option value="">– alle –</option>
+        <option value="1" {% if str_filters.converted == "1" %}selected{% endif %}>nur konvertiert</option>
+        <option value="0" {% if str_filters.converted == "0" %}selected{% endif %}>nur offen</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Anwenden</button>
+    <a href="/admin/conversations" class="btn btn-secondary">Zurücksetzen</a>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Conversations</h2>
+  </div>
+  {% if rows %}
+  <table>
+    <thead>
+      <tr>
+        <th>Wann</th>
+        <th>Shop</th>
+        <th>Nachrichten</th>
+        <th>Status</th>
+        <th>Attribution</th>
+        <th class="num">Umsatz</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in rows %}
+      <tr>
+        <td class="mono">{{ c.started_at.strftime("%Y-%m-%d %H:%M") }}</td>
+        <td>{{ c.shop_domain }}</td>
+        <td class="num">{{ c.message_count }}</td>
+        <td>
+          {% if c.converted %}
+            <span class="pill pill-ok">konvertiert</span>
+          {% else %}
+            <span class="pill">offen</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if c.attribution_type %}
+            <span class="mono subtle">{{ c.attribution_type }}</span>
+          {% else %}
+            <span class="subtle">—</span>
+          {% endif %}
+        </td>
+        <td class="num">{% if c.order_total_eur %}{{ "%.2f"|format(c.order_total_eur) }} €{% else %}—{% endif %}</td>
+        <td><a href="/admin/conversations/{{ c.id }}" class="subtle">öffnen →</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">Keine Conversations für die aktuellen Filter.</div>
+  {% endif %}
+</div>
+{% endblock %}

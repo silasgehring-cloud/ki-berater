@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · KI-Berater Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="eyebrow">Übersicht · Letzte 30 Tage</div>
+  <h1>Dashboard</h1>
+  <div class="sub">Globale Zahlen über alle Shops hinweg.</div>
+</div>
+
+<div class="tile-grid">
+  <div class="tile">
+    <div class="label">Shops gesamt</div>
+    <div class="value">{{ overview.shop_count }}</div>
+    <div class="note">{{ overview.active_subscription_count }} mit aktivem Abo</div>
+  </div>
+  <div class="tile">
+    <div class="label">Conversations 30T</div>
+    <div class="value">{{ overview.conversations_30d }}</div>
+    <div class="note">{{ overview.converted_30d }} konvertiert</div>
+  </div>
+  <div class="tile">
+    <div class="label">Conversion-Rate</div>
+    <div class="value accent">{{ "%.1f"|format(overview.conversion_rate_30d) }}%</div>
+    <div class="note">über alle Shops, 30 Tage</div>
+  </div>
+  <div class="tile">
+    <div class="label">Umsatz 30T</div>
+    <div class="value">{{ "{:,.0f}".format(overview.revenue_30d_eur).replace(",", ".") }} €</div>
+    <div class="note">attribuierte Conversions</div>
+  </div>
+  <div class="tile">
+    <div class="label">LLM-Kosten 30T</div>
+    <div class="value">{{ "%.2f"|format(overview.llm_cost_30d_eur) }} €</div>
+    <div class="note">Anthropic + Google + OpenAI</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Letzte Conversations</h2>
+    <a href="/admin/conversations" class="subtle">Alle ansehen →</a>
+  </div>
+  {% if conversations %}
+  <table>
+    <thead>
+      <tr>
+        <th>Wann</th>
+        <th>Shop</th>
+        <th>Nachrichten</th>
+        <th>Status</th>
+        <th class="num">Umsatz</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in conversations %}
+      <tr>
+        <td class="mono">{{ c.started_at.strftime("%Y-%m-%d %H:%M") }}</td>
+        <td>{{ c.shop_domain }}</td>
+        <td class="num">{{ c.message_count }}</td>
+        <td>
+          {% if c.converted %}
+            <span class="pill pill-ok">konvertiert</span>
+            {% if c.attribution_type == "strict" %}<span class="subtle mono" style="font-size: 10px;">strict</span>{% endif %}
+          {% else %}
+            <span class="pill">offen</span>
+          {% endif %}
+        </td>
+        <td class="num">{% if c.order_total_eur %}{{ "%.2f"|format(c.order_total_eur) }} €{% else %}—{% endif %}</td>
+        <td><a href="/admin/conversations/{{ c.id }}" class="subtle">öffnen →</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">Noch keine Conversations.</div>
+  {% endif %}
+</div>
+{% endblock %}

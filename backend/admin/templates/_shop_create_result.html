@@ -1,0 +1,30 @@
+{# HTMX-Fragment nach Shop-Anlage. Zeigt API-Key + Webhook-Secret EINMALIG. #}
+{% if error %}
+<div class="alert" style="background: oklch(0.93 0.05 25); color: oklch(0.40 0.12 25); padding: 10px 12px; border-radius: 4px; font-size: 13px;">
+  {{ error }}
+</div>
+{% else %}
+<div style="border: 1px solid var(--accent); background: var(--accent-soft); padding: 16px; border-radius: var(--radius);">
+  <div class="eyebrow" style="color: var(--accent-deep); margin-bottom: 12px;">Shop angelegt — Werte EINMALIG kopieren</div>
+  <div class="field" style="margin-bottom: 12px;">
+    <label>API-Key</label>
+    <div class="copy-field">
+      <span style="flex: 1;">{{ api_key }}</span>
+    </div>
+  </div>
+  <div class="field" style="margin-bottom: 12px;">
+    <label>Webhook-Secret</label>
+    <div class="copy-field">
+      <span style="flex: 1;">{{ webhook_secret }}</span>
+    </div>
+  </div>
+  <div class="subtle">
+    Diese Werte werden serverseitig nur als Argon2-Hash gespeichert und sind nach dem Schließen
+    nicht mehr abrufbar. Trag sie ins WP-Plugin ein und bewahre sie sicher auf.
+  </div>
+  <div style="margin-top: 12px;">
+    <a href="/admin/shops/{{ shop_id }}" class="btn btn-primary">Zum Shop</a>
+    <a href="/admin/shops" class="btn btn-secondary">Zur Liste</a>
+  </div>
+</div>
+{% endif %}

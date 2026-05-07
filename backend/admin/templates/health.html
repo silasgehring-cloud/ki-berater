@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}System · KI-Berater Admin{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="eyebrow">System</div>
+  <h1>System-<span class="serif">Status</span></h1>
+  <div class="sub">Laufzeit, Datenbanken, externe APIs.</div>
+</div>
+
+<div class="card section-gap">
+  <div class="card-head">
+    <h2>Backend</h2>
+  </div>
+  <ul class="health-list">
+    <li>
+      <span class="name">Version</span>
+      <span class="meta">{{ api_version }}</span>
+      <span class="pill pill-ok">ok</span>
+    </li>
+    <li>
+      <span class="name">Environment</span>
+      <span class="meta">{{ environment }}</span>
+      {% if environment == "production" %}
+        <span class="pill pill-ok">production</span>
+      {% else %}
+        <span class="pill">{{ environment }}</span>
+      {% endif %}
+    </li>
+    <li>
+      <span class="name">Retention-Loop</span>
+      <span class="meta">{{ retention_days }} Tage</span>
+      {% if retention_loop_enabled %}
+        <span class="pill pill-ok">aktiv</span>
+      {% else %}
+        <span class="pill">aus</span>
+      {% endif %}
+    </li>
+  </ul>
+</div>
+
+<div class="card section-gap">
+  <div class="card-head">
+    <h2>Datenbanken</h2>
+  </div>
+  <ul class="health-list">
+    {% for c in checks %}
+    <li>
+      <span class="name">{{ c.name }}</span>
+      <span class="meta">{{ c.detail }}</span>
+      {% if c.status == "ok" %}
+        <span class="pill pill-ok">ok</span>
+      {% elif c.status == "warn" %}
+        <span class="pill pill-warn">{{ c.label }}</span>
+      {% else %}
+        <span class="pill pill-err">fehler</span>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="card section-gap">
+  <div class="card-head">
+    <h2>API-Keys</h2>
+  </div>
+  <ul class="health-list">
+    {% for k in api_keys %}
+    <li>
+      <span class="name">{{ k.name }}</span>
+      <span class="meta">{{ k.note }}</span>
+      {% if k.set %}
+        <span class="pill pill-ok">gesetzt</span>
+      {% else %}
+        <span class="pill">leer</span>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Konfiguration</h2>
+  </div>
+  <ul class="health-list">
+    <li>
+      <span class="name">Sentry</span>
+      <span class="meta">{{ "DSN gesetzt" if sentry_dsn_set else "kein DSN" }}</span>
+      {% if sentry_dsn_set %}<span class="pill pill-ok">an</span>{% else %}<span class="pill">aus</span>{% endif %}
+    </li>
+    <li>
+      <span class="name">Stripe</span>
+      <span class="meta">{{ "API-Key gesetzt" if stripe_set else "kein Key" }}</span>
+      {% if stripe_set %}<span class="pill pill-ok">an</span>{% else %}<span class="pill">aus</span>{% endif %}
+    </li>
+    <li>
+      <span class="name">Rate-Limit-Storage</span>
+      <span class="meta">{{ rate_limit_storage }}</span>
+      <span class="pill">{{ rate_limit_default }}</span>
+    </li>
+  </ul>
+</div>
+{% endblock %}

@@ -2,13 +2,16 @@ import asyncio
 import contextlib
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, RedirectResponse, Response
 
+from backend.admin import admin_router
 from backend.api import health as health_router
 from backend.api.cors_middleware import PerShopCORSMiddleware
 from backend.api.deps import get_vector_index
@@ -94,6 +97,35 @@ app.include_router(billing_router.router)
 app.include_router(billing_router.webhook_router)
 app.include_router(analytics_router.router)
 app.include_router(health_router.router)
+
+# Admin UI: server-rendered Jinja2 templates + static assets at /admin/.
+# Auth via cookie (token == ADMIN_API_KEY). 401 on /admin/* gets rewritten
+# to a 302 to /admin/login by the handler below.
+_ADMIN_STATIC = Path(__file__).resolve().parent / "admin" / "static"
+app.mount("/admin/static", StaticFiles(directory=str(_ADMIN_STATIC)), name="admin-static")
+app.include_router(admin_router)
+
+
+@app.exception_handler(HTTPException)
+async def _http_exc_handler(request: Request, exc: HTTPException) -> Response:
+    """Turn 401s on /admin/* (non-HTMX, non-API) into a redirect to login."""
+    if (
+        exc.status_code == 401
+        and request.url.path.startswith("/admin")
+        and not request.url.path.startswith("/admin/login")
+        and not request.headers.get("HX-Request")
+    ):
+        return RedirectResponse(
+            url=f"/admin/login?next={request.url.path}",
+            status_code=303,
+        )
+    # Default behaviour for everything else.
+    headers = getattr(exc, "headers", None)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+        headers=headers,
+    )
 
 
 @app.get("/health")
