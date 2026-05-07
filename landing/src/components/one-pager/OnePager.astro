@@ -1,0 +1,127 @@
+---
+import Logo from "../shared/Logo.astro";
+import { COPY } from "../../data/copy";
+import { BRAND, ACCENT, fillName, type Lang } from "../../data/brand";
+
+interface Props {
+  lang?: Lang;
+  name?: string;
+  accent?: string;
+}
+
+const { lang = "de", name = BRAND, accent = ACCENT } = Astro.props;
+const t = COPY[lang];
+const isDe = lang === "de";
+---
+
+<div
+  class="kit-root"
+  style={`width: 100%; height: 100%; padding: 56px; background: #fff; --accent: ${accent}; font-size: 12px; display: flex; flex-direction: column;`}
+>
+  {/* Header */}
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid var(--color-ink);">
+    <Logo name={name} />
+    <div style="text-align: right;">
+      <div class="mono" style="font-size: 10px; color: var(--color-ink-3); letter-spacing: 0.08em;">ONE-PAGER · 2026</div>
+      <div style="font-size: 11px; color: var(--color-ink-3); margin-top: 2px;">
+        {isDe ? "KI-Kaufberater für WooCommerce" : "AI shopping advisor for WooCommerce"}
+      </div>
+    </div>
+  </div>
+
+  {/* Headline */}
+  <div style="margin-top: 24px; margin-bottom: 20px;">
+    <h1 style="font-size: 38px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0;">
+      {isDe ? (
+        <>Beratung, <span class="serif" style={`color: ${accent};`}>die verkauft.</span><br />Rund um die Uhr.</>
+      ) : (
+        <>Advice <span class="serif" style={`color: ${accent};`}>that sells.</span><br />Around the clock.</>
+      )}
+    </h1>
+    <p style="font-size: 12px; line-height: 1.5; color: var(--color-ink-2); margin-top: 12px; margin-bottom: 0; max-width: 580px;">
+      {fillName(t.hero.sub, name)}
+    </p>
+  </div>
+
+  {/* Metrics */}
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); padding: 12px 0; border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line);">
+    {t.metrics.map((m, i) => (
+      <div style={`padding-left: ${i === 0 ? "0" : "14px"}; border-left: ${i === 0 ? "none" : "1px solid var(--color-line)"};`}>
+        <div style={`font-size: 28px; font-family: var(--font-display); font-style: italic; line-height: 1; color: ${i % 2 === 0 ? accent : "var(--color-ink)"};`}>{m.num}</div>
+        <div style="font-size: 11px; font-weight: 500; margin-top: 4px;">{m.label}</div>
+        <div style="font-size: 9px; color: var(--color-ink-3); margin-top: 1px;">{m.note}</div>
+      </div>
+    ))}
+  </div>
+
+  {/* Two-col body */}
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 18px; flex: 1;">
+    <div>
+      <div class="eyebrow" style="margin-bottom: 8px; font-size: 9px;">{t.features.eyebrow}</div>
+      <h3 style="font-size: 16px; font-weight: 500; margin-bottom: 10px; letter-spacing: -0.015em; margin-top: 0;">{isDe ? "Was es tut" : "What it does"}</h3>
+      <div style="display: grid; gap: 8px;">
+        {t.features.items.map((f) => (
+          <div style="display: grid; grid-template-columns: 20px 1fr; gap: 8px;">
+            <div class="mono" style={`font-size: 9px; color: ${accent}; padding-top: 1px;`}>{f.tag}</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 500; line-height: 1.3;">{f.title}</div>
+              <div style="font-size: 10px; color: var(--color-ink-2); line-height: 1.4; margin-top: 1px;">{f.body}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow" style="margin-bottom: 8px; font-size: 9px;">{t.integration.eyebrow}</div>
+      <h3 style="font-size: 16px; font-weight: 500; margin-bottom: 10px; letter-spacing: -0.015em; margin-top: 0;">{isDe ? "Wie es startet" : "How to launch"}</h3>
+      <div style="display: grid; gap: 8px;">
+        {t.integration.steps.map((s) => (
+          <div style="display: grid; grid-template-columns: 20px 1fr; gap: 8px;">
+            <div class="mono" style="font-size: 9px; color: var(--color-ink-3); padding-top: 1px;">0{s.n}</div>
+            <div>
+              <div style="font-size: 11px; font-weight: 500; line-height: 1.3;">{s.title}</div>
+              <div style="font-size: 10px; color: var(--color-ink-2); line-height: 1.4; margin-top: 1px;">{s.body}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pricing mini */}
+      <div class="eyebrow" style="margin-top: 18px; margin-bottom: 8px; font-size: 9px;">{t.pricing.eyebrow}</div>
+      <div style="border: 1px solid var(--color-line); border-radius: 4px; overflow: hidden;">
+        {t.pricing.tiers.map((p, i) => (
+          <div style={`display: grid; grid-template-columns: 1fr auto; padding: 8px 12px; border-top: ${i === 0 ? "none" : "1px solid var(--color-line-soft)"}; background: ${p.highlight ? "var(--color-bg-soft)" : "transparent"}; align-items: center;`}>
+            <div>
+              <div style="font-size: 11px; font-weight: 500;">{p.name}</div>
+              <div style="font-size: 9px; color: var(--color-ink-3);">{p.desc}</div>
+            </div>
+            <div class="serif" style="font-size: 18px;">{p.price}<span style="font-size: 10px; opacity: 0.7;">{p.per}</span></div>
+          </div>
+        ))}
+      </div>
+      <div style="font-size: 9px; color: var(--color-ink-3); margin-top: 6px;">{t.pricing.revshare}</div>
+    </div>
+  </div>
+
+  {/* Quote */}
+  <div style={`margin-top: 16px; padding: 14px 18px; background: var(--color-bg-soft); border-left: 3px solid ${accent};`}>
+    <div class="serif" style="font-size: 14px; line-height: 1.4;">"{t.proof.quotes[0].text}"</div>
+    <div style="font-size: 10px; color: var(--color-ink-3); margin-top: 6px;">{t.proof.quotes[0].name} · {t.proof.quotes[0].role}</div>
+  </div>
+
+  {/* Footer / CTA */}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--color-ink);">
+    <div>
+      <div style="font-size: 14px; font-weight: 500;">
+        {isDe ? "Demo buchen:" : "Book a demo:"} <span class="mono">{name.toLowerCase()}.io/demo</span>
+      </div>
+      <div style="font-size: 10px; color: var(--color-ink-3); margin-top: 2px;">
+        {isDe ? "30 Min · mit Ihren echten Produkten · keine Folien" : "30 min · with your real products · no slides"}
+      </div>
+    </div>
+    <div style="font-size: 9px; color: var(--color-ink-3); text-align: right; font-family: var(--font-mono);">
+      {isDe ? "DSGVO · EU-Hosting" : "GDPR · EU hosting"}<br />
+      {isDe ? "WooCommerce-zertifiziert" : "WooCommerce-certified"}
+    </div>
+  </div>
+</div>

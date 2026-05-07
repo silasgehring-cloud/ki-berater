@@ -1,0 +1,301 @@
+---
+import Logo from "../shared/Logo.astro";
+import WooLogo from "../shared/WooLogo.astro";
+import ChatPreviewMock from "../shared/ChatPreviewMock.astro";
+import { COPY } from "../../data/copy";
+import { BRAND, ACCENT, fillName, type Lang } from "../../data/brand";
+
+interface Props {
+  lang?: Lang;
+  name?: string;
+  accent?: string;
+}
+
+const { lang = "de", name = BRAND, accent = ACCENT } = Astro.props;
+const t = COPY[lang];
+const isDe = lang === "de";
+
+const finalCtaLines = t.final_cta.title.split("\n");
+
+const compareRows = [
+  { f: isDe ? "Kennt Ihren Katalog tief" : "Knows your catalog deeply", us: true, them: false },
+  { f: isDe ? "Liest Lagerbestand & Preise live" : "Reads stock & prices live", us: true, them: false },
+  { f: isDe ? "Empfiehlt aktiv (nicht nur antwortet)" : "Actively recommends (not just answers)", us: true, them: false },
+  { f: isDe ? "Legt in Warenkorb" : "Adds to cart", us: true, them: false },
+  { f: isDe ? "Bezahlung nach Erfolg" : "Pay for outcomes", us: true, them: false },
+  { f: isDe ? "Generischer FAQ-Bot" : "Generic FAQ bot", us: false, them: true },
+];
+---
+
+<div
+  class="kit-root deck-root"
+  style={`width: 100%; height: 100%; position: relative; --accent: ${accent}; font-family: var(--font-sans);`}
+  data-deck
+>
+  {/* Slide 1 — Title */}
+  <div class="deck-slide" data-slide="0" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 80px; background: var(--color-ink); color: #fff;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <Logo name={name} mode="dark" variant="accent-mark" accent={accent} />
+      <div class="mono" style="font-size: 12px; opacity: 0.5; letter-spacing: 0.1em;">SALES DECK · 2026</div>
+    </div>
+    <div>
+      <div class="eyebrow" style="color: rgba(255,255,255,0.5); margin-bottom: 24px;">{t.hero.eyebrow}</div>
+      <h1 style="font-size: 96px; line-height: 0.95; letter-spacing: -0.035em; font-weight: 400; margin: 0;">
+        {isDe ? (
+          <>Beratung,<br /><span class="serif" style={`color: ${accent}; font-size: 108px;`}>die verkauft.</span></>
+        ) : (
+          <>Advice<br /><span class="serif" style={`color: ${accent}; font-size: 108px;`}>that sells.</span></>
+        )}
+      </h1>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 13px; color: rgba(255,255,255,0.5);">
+      <div>{isDe ? "Vertraulich · für [Shop-Name]" : "Confidential · for [Shop name]"}</div>
+      <div>{isDe ? "Vorgestellt von [Ihr Name]" : "Presented by [Your name]"}</div>
+    </div>
+  </div>
+
+  {/* Slide 2 — Problem */}
+  <div class="deck-slide" data-slide="1" style="height: 100%; padding: 60px 80px; background: var(--color-bg); color: var(--color-ink); display: flex; flex-direction: column;">
+    <div class="mono" style="font-size: 12px; color: var(--color-ink-3); letter-spacing: 0.1em; margin-bottom: 32px;">01 / 09</div>
+    <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0; max-width: 900px;">
+      {isDe ? "Online verkaufen sich Produkte nicht von selbst." : "Online, products don't sell themselves."}
+    </h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 48px;">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">{isDe ? "IM LADEN" : "IN-STORE"}</div>
+        <p style="font-size: 22px; line-height: 1.4; color: var(--color-ink); margin: 0;">
+          {isDe ? "Ein Verkäufer fragt nach, vergleicht, empfiehlt. Conversion-Rate: 20–40%." : "A salesperson asks, compares, recommends. Conversion: 20–40%."}
+        </p>
+      </div>
+      <div>
+        <div class="eyebrow" style={`margin-bottom: 16px; color: ${accent};`}>{isDe ? "IM SHOP" : "ONLINE"}</div>
+        <p style="font-size: 22px; line-height: 1.4; color: var(--color-ink); margin: 0;">
+          {isDe ? "Ein Suchfeld, 12.000 SKUs, kein Kontext. Conversion-Rate: 1–3%." : "A search box, 12k SKUs, no context. Conversion: 1–3%."}
+        </p>
+      </div>
+    </div>
+    <div style={`margin-top: 80px; padding: 32px; background: var(--color-bg-soft); border-left: 3px solid ${accent};`}>
+      <p style="font-size: 28px; font-family: var(--font-display); font-style: italic; margin: 0; line-height: 1.3;">
+        {isDe ? "97% Ihrer Besucher kaufen nichts. Die meisten, weil sie nicht das Richtige finden." : "97% of your visitors don't buy. Most because they don't find the right thing."}
+      </p>
+    </div>
+  </div>
+
+  {/* Slide 3 — Solution */}
+  <div class="deck-slide" data-slide="2" style="height: 100%; padding: 60px 80px; background: var(--color-bg); color: var(--color-ink); display: flex; flex-direction: column;">
+    <div class="mono" style="font-size: 12px; color: var(--color-ink-3); letter-spacing: 0.1em; margin-bottom: 32px;">02 / 09</div>
+    <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0; max-width: 900px;">
+      {fillName(isDe ? `__NAME__ ist der Verkäufer auf Ihrer Fläche.` : `__NAME__ is the salesperson on your floor.`, name)}
+    </h2>
+    <p style="font-size: 19px; line-height: 1.55; color: var(--color-ink-2); max-width: 720px; margin-top: 32px;">
+      {fillName(t.hero.sub, name)}
+    </p>
+    <div style="margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+      {t.features.items.map((f) => (
+        <div style="padding: 24px; background: var(--color-bg-soft); border-radius: var(--radius);">
+          <div class="mono" style={`font-size: 12px; color: ${accent}; margin-bottom: 12px;`}>{f.tag}</div>
+          <div style="font-size: 18px; font-weight: 500; margin-bottom: 8px;">{f.title}</div>
+          <div style="font-size: 13px; color: var(--color-ink-2); line-height: 1.5;">{f.body}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* Slide 4 — Live demo */}
+  <div class="deck-slide" data-slide="3" style="height: 100%; padding: 60px 80px; background: var(--color-bg); color: var(--color-ink); display: flex; flex-direction: column;">
+    <div class="mono" style="font-size: 12px; color: var(--color-ink-3); letter-spacing: 0.1em; margin-bottom: 32px;">03 / 09</div>
+    <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0; max-width: 900px;">
+      {isDe ? "So sieht das im Shop aus." : "Here's what it looks like."}
+    </h2>
+    <div style="margin-top: 32px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: start;">
+      <ChatPreviewMock name={name} lang={lang} />
+      <div>
+        <div class="eyebrow" style="margin-bottom: 12px;">{isDe ? "WAS PASSIERT" : "WHAT HAPPENS"}</div>
+        <ol style="padding-left: 18px; margin: 0; font-size: 15px; line-height: 1.7; color: var(--color-ink-2);">
+          <li>{isDe ? "Besucher landet auf Produktliste" : "Visitor hits product list"}</li>
+          <li>{isDe ? `${name} öffnet sich kontextuell` : `${name} opens contextually`}</li>
+          <li>{isDe ? "Stellt 1–2 qualifizierende Fragen" : "Asks 1–2 qualifying questions"}</li>
+          <li>{isDe ? "Empfiehlt 2–3 passende Produkte" : "Recommends 2–3 fit products"}</li>
+          <li>{isDe ? "Beantwortet Detailfragen" : "Answers detail questions"}</li>
+          <li>{isDe ? "Legt in Warenkorb · Checkout" : "Adds to cart · checkout"}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  {/* Slide 5 — Numbers */}
+  <div class="deck-slide" data-slide="4" style="height: 100%; padding: 60px 80px; background: var(--color-bg); color: var(--color-ink); display: flex; flex-direction: column;">
+    <div class="mono" style="font-size: 12px; color: var(--color-ink-3); letter-spacing: 0.1em; margin-bottom: 32px;">04 / 09</div>
+    <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0; max-width: 900px;">
+      {isDe ? "Die Zahlen, die zählen." : "The numbers that matter."}
+    </h2>
+    <div style="margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;">
+      {t.metrics.map((m, i) => (
+        <div style={`padding: 0 24px; border-left: ${i === 0 ? "none" : "1px solid var(--color-line)"};`}>
+          <div style={`font-size: 88px; font-family: var(--font-display); font-style: italic; line-height: 1; font-weight: 400; letter-spacing: -0.03em; color: ${i === 0 || i === 2 ? accent : "var(--color-ink)"};`}>{m.num}</div>
+          <div style="font-size: 18px; font-weight: 500; margin-top: 16px;">{m.label}</div>
+          <div style="font-size: 13px; color: var(--color-ink-3); margin-top: 4px;">{m.note}</div>
+        </div>
+      ))}
+    </div>
+    <div style="margin-top: 64px; font-size: 14px; color: var(--color-ink-3); font-style: italic;">
+      {isDe ? "* Median über 240 WooCommerce-Shops, 90 Tage nach Go-Live. Einzelergebnisse variieren." : "* Median across 240 WooCommerce shops, 90 days post-launch. Results vary."}
+    </div>
+  </div>
+
+  {/* Slide 6 — Differentiator */}
+  <div class="deck-slide" data-slide="5" style="height: 100%; padding: 60px 80px; background: var(--color-bg); color: var(--color-ink); display: flex; flex-direction: column;">
+    <div class="mono" style="font-size: 12px; color: var(--color-ink-3); letter-spacing: 0.1em; margin-bottom: 32px;">05 / 09</div>
+    <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0; max-width: 900px;">
+      {isDe ? "Warum nicht ein normaler Chatbot?" : "Why not a regular chatbot?"}
+    </h2>
+    <div style="margin-top: 48px; border: 1px solid var(--color-ink);">
+      {compareRows.map((r, i) => (
+        <div style={`display: grid; grid-template-columns: 1fr 100px 100px; padding: 16px 24px; border-top: ${i === 0 ? "none" : "1px solid var(--color-line-soft)"}; align-items: center;`}>
+          <div style="font-size: 16px;">{r.f}</div>
+          <div style={`text-align: center; font-size: 18px; color: ${r.us ? accent : "var(--color-ink-4)"};`}>{r.us ? "✓" : "—"}</div>
+          <div style="text-align: center; font-size: 18px; color: var(--color-ink-4);">{r.them ? "✓" : "—"}</div>
+        </div>
+      ))}
+      <div style="display: grid; grid-template-columns: 1fr 100px 100px; padding: 12px 24px; background: var(--color-bg-soft); font-family: var(--font-mono); font-size: 12px; color: var(--color-ink-3); text-transform: uppercase; letter-spacing: 0.08em; border-top: 1px solid var(--color-ink);">
+        <div></div>
+        <div style="text-align: center;">{name}</div>
+        <div style="text-align: center;">{isDe ? "Andere" : "Others"}</div>
+      </div>
+    </div>
+  </div>
+
+  {/* Slide 7 — Integration */}
+  <div class="deck-slide" data-slide="6" style="height: 100%; padding: 60px 80px; background: var(--color-bg); color: var(--color-ink); display: flex; flex-direction: column;">
+    <div class="mono" style="font-size: 12px; color: var(--color-ink-3); letter-spacing: 0.1em; margin-bottom: 32px;">06 / 09</div>
+    <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0; max-width: 900px;">
+      {t.integration.title.replace("\n", " ")}
+    </h2>
+    <div style="margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+      {t.integration.steps.map((s) => (
+        <div>
+          <div style={`font-size: 14px; font-family: var(--font-mono); color: ${accent}; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid ${accent};`}>STEP 0{s.n}</div>
+          <div style="font-size: 18px; font-weight: 500; margin-bottom: 8px; line-height: 1.3;">{s.title}</div>
+          <div style="font-size: 13px; color: var(--color-ink-2); line-height: 1.5;">{s.body}</div>
+        </div>
+      ))}
+    </div>
+    <div style="margin-top: 64px; padding: 20px; background: var(--color-bg-soft); display: flex; align-items: center; gap: 16px;">
+      <WooLogo />
+      <div style="font-size: 15px;">
+        <strong>{isDe ? "8 Minuten" : "8 minutes"}</strong>
+        <span style="color: var(--color-ink-3);"> · {isDe ? "Plugin-Installation, durchschnittliche Kunden-Zeit" : "plugin install, avg. customer time"}</span>
+      </div>
+    </div>
+  </div>
+
+  {/* Slide 8 — Pricing */}
+  <div class="deck-slide" data-slide="7" style="height: 100%; padding: 60px 80px; background: var(--color-bg); color: var(--color-ink); display: flex; flex-direction: column;">
+    <div class="mono" style="font-size: 12px; color: var(--color-ink-3); letter-spacing: 0.1em; margin-bottom: 32px;">07 / 09</div>
+    <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0; max-width: 900px;">
+      {isDe ? "Preis ist einfach." : "Pricing is simple."}
+    </h2>
+    <p style="font-size: 19px; color: var(--color-ink-2); margin-top: 16px; margin-bottom: 40px; max-width: 720px;">
+      {fillName(t.pricing.sub, name)}
+    </p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+      {t.pricing.tiers.map((p) => (
+        <div
+          style={`padding: 28px; background: ${p.highlight ? "var(--color-ink)" : "transparent"}; color: ${p.highlight ? "#fff" : "var(--color-ink)"}; border: 1px solid ${p.highlight ? "var(--color-ink)" : "var(--color-line)"}; border-radius: var(--radius);`}
+        >
+          <div style={`font-size: 13px; font-weight: 500; opacity: ${p.highlight ? 0.7 : 1}; margin-bottom: 4px;`}>{p.name}</div>
+          <div style="font-size: 12px; opacity: 0.65; margin-bottom: 20px;">{p.desc}</div>
+          <div>
+            <span class="serif" style={`font-size: 44px; line-height: 1; color: ${p.highlight ? accent : "var(--color-ink)"};`}>{p.price}</span>
+            <span style="font-size: 13px; opacity: 0.7; margin-left: 4px;">{p.per}</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 6px;">
+            {p.feats.map((f) => <li style="font-size: 12px; opacity: 0.85;">— {f}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <div style="margin-top: 32px; font-size: 13px; color: var(--color-ink-3);">{t.pricing.revshare}</div>
+  </div>
+
+  {/* Slide 9 — CTA */}
+  <div class="deck-slide" data-slide="8" style={`height: 100%; padding: 80px; background: ${accent}; color: #fff; display: flex; flex-direction: column; justify-content: space-between;`}>
+    <Logo name={name} mode="dark" />
+    <div>
+      <div class="eyebrow" style="color: rgba(255,255,255,0.7); margin-bottom: 24px;">{isDe ? "NÄCHSTE SCHRITTE" : "NEXT STEPS"}</div>
+      <h2 style="font-size: 96px; line-height: 0.95; letter-spacing: -0.035em; font-weight: 400; margin: 0;">
+        {finalCtaLines.map((line, i) => (
+          <span style="display: block;">
+            {i === 1 ? <span class="serif" style="font-size: 110px;">{line}</span> : line}
+          </span>
+        ))}
+      </h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.25);">
+      <div>
+        <div class="eyebrow" style="color: rgba(255,255,255,0.7); margin-bottom: 8px;">1. {isDe ? "DEMO" : "DEMO"}</div>
+        <div style="font-size: 16px; line-height: 1.4;">{isDe ? "30 Min mit Ihren echten Produkten" : "30 min with your real products"}</div>
+      </div>
+      <div>
+        <div class="eyebrow" style="color: rgba(255,255,255,0.7); margin-bottom: 8px;">2. {isDe ? "PILOT" : "PILOT"}</div>
+        <div style="font-size: 16px; line-height: 1.4;">{isDe ? "14 Tage live, kostenlos" : "14 days live, free"}</div>
+      </div>
+      <div>
+        <div class="eyebrow" style="color: rgba(255,255,255,0.7); margin-bottom: 8px;">3. {isDe ? "ENTSCHEIDUNG" : "DECISION"}</div>
+        <div style="font-size: 16px; line-height: 1.4;">{isDe ? "Mit echten Zahlen aus Ihrem Shop" : "With real numbers from your shop"}</div>
+      </div>
+    </div>
+  </div>
+
+  {/* Slide nav */}
+  <div
+    class="no-print"
+    data-deck-nav
+    style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 100px; border: 1px solid var(--color-line); z-index: 10; box-shadow: 0 4px 16px rgba(0,0,0,0.08);"
+  >
+    <button data-deck-prev style="width: 28px; height: 28px; border: none; background: transparent; border-radius: 100px; cursor: pointer; font-size: 14px; color: var(--color-ink); display: flex; align-items: center; justify-content: center;">←</button>
+    <div class="mono" data-deck-counter style="font-size: 12px; color: var(--color-ink-2); padding: 0 8px; min-width: 40px; text-align: center;">1 / 9</div>
+    <button data-deck-next style="width: 28px; height: 28px; border: none; background: transparent; border-radius: 100px; cursor: pointer; font-size: 14px; color: var(--color-ink); display: flex; align-items: center; justify-content: center;">→</button>
+  </div>
+</div>
+
+<style>
+  .deck-slide { display: none; }
+  .deck-slide[data-active] { display: flex; }
+</style>
+
+<script>
+  function initDeck() {
+    const root = document.querySelector<HTMLElement>("[data-deck]");
+    if (!root) return;
+    const slides = root.querySelectorAll<HTMLElement>(".deck-slide");
+    const counter = root.querySelector<HTMLElement>("[data-deck-counter]");
+    const prev = root.querySelector<HTMLButtonElement>("[data-deck-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-deck-next]");
+
+    let idx = 0;
+    const total = slides.length;
+
+    function show(n: number) {
+      idx = Math.max(0, Math.min(total - 1, n));
+      slides.forEach((el, i) => {
+        if (i === idx) el.setAttribute("data-active", "");
+        else el.removeAttribute("data-active");
+      });
+      if (counter) counter.textContent = `${idx + 1} / ${total}`;
+    }
+
+    prev?.addEventListener("click", (e) => { e.stopPropagation(); show(idx - 1); });
+    next?.addEventListener("click", (e) => { e.stopPropagation(); show(idx + 1); });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") show(idx - 1);
+      if (e.key === "ArrowRight") show(idx + 1);
+    });
+
+    show(0);
+  }
+
+  if (document.readyState !== "loading") initDeck();
+  else document.addEventListener("DOMContentLoaded", initDeck);
+</script>

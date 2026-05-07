@@ -1,0 +1,37 @@
+---
+import Base from "../../layouts/Base.astro";
+import LangToggle from "../../components/shared/LangToggle.astro";
+import OnePager from "../../components/one-pager/OnePager.astro";
+import { BRAND } from "../../data/brand";
+---
+
+<Base lang="en" title={`${BRAND} · One-Pager`}>
+  <LangToggle lang="en" path="/en/one-pager" />
+  <div class="op-stage">
+    <div class="op-frame">
+      <OnePager lang="en" />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .op-stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: var(--color-bg-soft);
+    padding: 40px 20px;
+  }
+  .op-frame {
+    width: 794px;
+    height: 1123px;
+    max-width: 100%;
+    background: #fff;
+    box-shadow: 0 30px 80px -20px rgba(26, 25, 22, 0.18);
+  }
+  @media print {
+    .op-stage { background: #fff; padding: 0; min-height: auto; }
+    .op-frame { box-shadow: none; width: 794px; height: 1123px; }
+  }
+</style>

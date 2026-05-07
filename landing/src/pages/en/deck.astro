@@ -1,0 +1,40 @@
+---
+import Base from "../../layouts/Base.astro";
+import LangToggle from "../../components/shared/LangToggle.astro";
+import SalesDeck from "../../components/deck/SalesDeck.astro";
+import { BRAND } from "../../data/brand";
+---
+
+<Base lang="en" title={`${BRAND} · Sales Deck`}>
+  <LangToggle lang="en" path="/en/deck" />
+  <div class="deck-stage">
+    <div class="deck-frame">
+      <SalesDeck lang="en" />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .deck-stage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-soft);
+    padding: 40px 20px;
+  }
+  .deck-frame {
+    width: 1280px;
+    height: 720px;
+    max-width: 100%;
+    aspect-ratio: 1280 / 720;
+    background: var(--color-bg);
+    border: 1px solid var(--color-line);
+    box-shadow: 0 30px 80px -20px rgba(26,25,22,0.18);
+    overflow: hidden;
+    position: relative;
+  }
+  @media (max-width: 1320px) {
+    .deck-frame { width: 100%; height: auto; }
+  }
+</style>

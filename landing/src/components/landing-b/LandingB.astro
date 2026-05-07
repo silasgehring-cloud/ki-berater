@@ -1,0 +1,187 @@
+---
+import Logo from "../shared/Logo.astro";
+import ChatPreviewMock from "../shared/ChatPreviewMock.astro";
+import { COPY } from "../../data/copy";
+import { BRAND, ACCENT, fillName, type Lang } from "../../data/brand";
+
+interface Props {
+  lang?: Lang;
+  name?: string;
+  accent?: string;
+}
+
+const { lang = "de", name = BRAND, accent = ACCENT } = Astro.props;
+const t = COPY[lang];
+const isDe = lang === "de";
+
+const finalCtaLines = t.final_cta.title.split("\n");
+const choose = isDe ? "Auswählen →" : "Choose →";
+---
+
+<div class="kit-root" style={`background: var(--color-bg); --accent: ${accent};`}>
+
+  {/* Top bar — minimal */}
+  <header
+    style="display: flex; align-items: center; justify-content: space-between; padding: 24px 64px;"
+  >
+    <Logo name={name} variant="serif" accent={accent} mode="light" />
+    <div style="font-size: 13px; color: var(--color-ink-3); font-family: var(--font-mono);">
+      {isDe ? "FÜR WOOCOMMERCE" : "FOR WOOCOMMERCE"}
+    </div>
+    <a class="btn btn-primary" href="#cta" style="border-radius: 100px; padding: 10px 18px;">{t.nav.cta}</a>
+  </header>
+
+  {/* HERO */}
+  <section style="padding: 60px 64px 80px; position: relative;">
+    <div class="eyebrow" style="margin-bottom: 40px;">
+      <span class="live-dot" style="margin-right: 10px; vertical-align: middle;"></span>
+      {t.hero.eyebrow}
+    </div>
+    <h1
+      style="font-size: 180px; line-height: 0.92; letter-spacing: -0.045em; font-weight: 400; margin: 0;"
+    >
+      {isDe ? (
+        <>
+          <div>Beratung,</div>
+          <div><span class="serif" style={`font-size: 200px; color: ${accent};`}>die verkauft.</span></div>
+          <div style="color: var(--color-ink-3);">Rund um die Uhr.</div>
+        </>
+      ) : (
+        <>
+          <div>Advice</div>
+          <div><span class="serif" style={`font-size: 200px; color: ${accent};`}>that sells.</span></div>
+          <div style="color: var(--color-ink-3);">Around the clock.</div>
+        </>
+      )}
+    </h1>
+
+    <div style="margin-top: 60px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: start;">
+      <div>
+        <p style="font-size: 20px; line-height: 1.5; color: var(--color-ink-2); margin-bottom: 28px;">
+          {fillName(t.hero.sub, name)}
+        </p>
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <a class="btn btn-primary" href="#cta" style="font-size: 15px; padding: 14px 22px;">
+            {t.hero.cta_primary}
+          </a>
+          <a class="btn btn-secondary" href="#" style="font-size: 15px; padding: 14px 22px;">
+            {t.hero.cta_secondary} →
+          </a>
+        </div>
+        <div style="font-size: 13px; color: var(--color-ink-3);">{t.hero.trust}</div>
+      </div>
+      <ChatPreviewMock name={name} lang={lang} />
+    </div>
+  </section>
+
+  {/* Metrics — large with dividers */}
+  <section style="padding: 80px 64px; border-top: 1px solid var(--color-ink);">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;">
+      {t.metrics.map((m, i) => (
+        <div style={`padding: 0 32px; border-left: ${i === 0 ? "none" : "1px solid var(--color-line)"};`}>
+          <div style={`font-size: 84px; font-family: var(--font-display); font-style: italic; line-height: 1; font-weight: 400; letter-spacing: -0.03em; color: ${i === 1 ? accent : "var(--color-ink)"};`}>{m.num}</div>
+          <div style="font-size: 16px; font-weight: 500; margin-top: 14px;">{m.label}</div>
+          <div style="font-size: 13px; color: var(--color-ink-3); margin-top: 4px;">{m.note}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* Manifesto */}
+  <section style="padding: 140px 64px; background: var(--color-ink); color: #fff;">
+    <div class="eyebrow" style="color: rgba(255,255,255,0.5); margin-bottom: 40px;">
+      {isDe ? "MANIFEST" : "MANIFESTO"}
+    </div>
+    <p style="font-size: 56px; line-height: 1.15; letter-spacing: -0.025em; font-weight: 400; font-family: var(--font-display); font-style: italic; max-width: 1100px; margin: 0;">
+      {isDe ? (
+        <>Im Laden gibt es einen Verkäufer, der zuhört, fragt, vergleicht und empfiehlt. Online: ein Suchfeld und 12.000 Produkte.<br /><span style={`color: ${accent};`}>Das ändern wir.</span></>
+      ) : (
+        <>In a shop there's a salesperson who listens, asks, compares and recommends. Online: a search box and 12,000 SKUs.<br /><span style={`color: ${accent};`}>We're fixing that.</span></>
+      )}
+    </p>
+  </section>
+
+  {/* How it works — alternating rows */}
+  <section style="padding: 120px 64px;">
+    <div class="eyebrow" style="margin-bottom: 16px;">{t.features.eyebrow}</div>
+    <h2 style="font-size: 64px; line-height: 1.05; letter-spacing: -0.03em; white-space: pre-line; margin-bottom: 80px; font-weight: 400;">
+      {t.features.title}
+    </h2>
+    {t.features.items.map((f) => (
+      <div style="display: grid; grid-template-columns: 120px 1fr 1fr; gap: 48px; padding: 32px 0; border-top: 1px solid var(--color-line); align-items: start;">
+        <div class="mono" style="font-size: 13px; color: var(--color-ink-3); padding-top: 6px;">{f.tag}</div>
+        <h3 style="font-size: 32px; letter-spacing: -0.02em; font-weight: 400; margin: 0;">{f.title}</h3>
+        <p style="font-size: 17px; color: var(--color-ink-2); line-height: 1.55; margin: 0;">{f.body}</p>
+      </div>
+    ))}
+  </section>
+
+  {/* Pricing — table look */}
+  <section
+    id="pricing"
+    style="padding: 120px 64px; background: var(--color-bg-soft); border-top: 1px solid var(--color-line);"
+  >
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 64px; margin-bottom: 56px;">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">{t.pricing.eyebrow}</div>
+        <h2 style="font-size: 56px; line-height: 1.02; letter-spacing: -0.03em; white-space: pre-line; font-weight: 400; margin: 0;">
+          {t.pricing.title}
+        </h2>
+      </div>
+      <p style="font-size: 20px; color: var(--color-ink-2); line-height: 1.5; margin: 0; padding-top: 40px;">
+        {fillName(t.pricing.sub, name)}
+      </p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--color-ink);">
+      {t.pricing.tiers.map((p, i) => (
+        <div
+          style={`padding: 32px; background: ${p.highlight ? accent : "var(--color-bg)"}; color: ${p.highlight ? "#fff" : "var(--color-ink)"}; border-left: ${i === 0 ? "none" : "1px solid var(--color-ink)"};`}
+        >
+          <div style={`font-size: 14px; font-weight: 500; opacity: ${p.highlight ? 0.85 : 1}; margin-bottom: 4px;`}>{p.name}</div>
+          <div style="font-size: 14px; opacity: 0.7; margin-bottom: 28px;">{p.desc}</div>
+          <div style="margin-bottom: 28px;">
+            <span class="serif" style="font-size: 60px; line-height: 1;">{p.price}</span>
+            <span style="font-size: 15px; opacity: 0.7; margin-left: 4px;">{p.per}</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 0 0 28px; display: grid; gap: 10px;">
+            {p.feats.map((f) => (
+              <li style="font-size: 14px; display: flex; gap: 10px; align-items: center;">
+                <span>—</span>{f}
+              </li>
+            ))}
+          </ul>
+          <button
+            class="btn"
+            style={`width: 100%; justify-content: center; background: ${p.highlight ? "#fff" : "var(--color-ink)"}; color: ${p.highlight ? "var(--color-ink)" : "#fff"};`}
+          >{choose}</button>
+        </div>
+      ))}
+    </div>
+    <div style="margin-top: 24px; font-size: 13px; color: var(--color-ink-3);">{t.pricing.revshare}</div>
+  </section>
+
+  {/* Final CTA — accent background */}
+  <section id="cta" style={`padding: 160px 64px; background: ${accent}; color: #fff;`}>
+    <h2 style="font-size: 140px; line-height: 0.95; letter-spacing: -0.04em; font-weight: 400; margin: 0 0 40px;">
+      {finalCtaLines.map((line, i) => (
+        <span style="display: block;">
+          {i === 1 ? <span class="serif" style="font-size: 160px;">{line}</span> : line}
+        </span>
+      ))}
+    </h2>
+    <div style="display: flex; justify-content: space-between; align-items: end; gap: 64px;">
+      <p style="font-size: 22px; color: rgba(255,255,255,0.85); line-height: 1.4; margin: 0; max-width: 480px;">{t.final_cta.sub}</p>
+      <a class="btn" href="#" style="background: #fff; color: var(--color-ink); font-size: 18px; padding: 20px 32px; border-radius: 100px;">
+        {t.final_cta.cta} →
+      </a>
+    </div>
+  </section>
+
+  {/* Minimal footer */}
+  <footer
+    style="padding: 40px 64px; background: var(--color-ink); color: rgba(255,255,255,0.7); display: flex; justify-content: space-between; align-items: center;"
+  >
+    <Logo name={name} mode="dark" variant="accent-mark" accent={accent} />
+    <div style="font-size: 12px; font-family: var(--font-mono);">{t.footer.tag} · © 2026</div>
+  </footer>
+</div>

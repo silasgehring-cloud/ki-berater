@@ -1,0 +1,297 @@
+---
+import Logo from "../shared/Logo.astro";
+import WooLogo from "../shared/WooLogo.astro";
+import ChatPreviewMock from "../shared/ChatPreviewMock.astro";
+import { COPY } from "../../data/copy";
+import { BRAND, ACCENT, fillName, type Lang } from "../../data/brand";
+
+interface Props {
+  lang?: Lang;
+  name?: string;
+  accent?: string;
+}
+
+const { lang = "de", name = BRAND, accent = ACCENT } = Astro.props;
+const t = COPY[lang];
+
+const headlineLines = t.hero.headline_a.split("\n");
+const featuresTitle = t.features.title;
+const integrationTitle = t.integration.title;
+const proofTitle = t.proof.title;
+const pricingTitle = t.pricing.title;
+const finalCtaLines = t.final_cta.title.split("\n");
+
+const popularLabel = lang === "de" ? "BELIEBT" : "POPULAR";
+const choose = lang === "de" ? "Auswählen" : "Choose";
+const wooBadge = lang === "de" ? "WooCommerce-zertifiziert" : "WooCommerce-certified";
+const colKey = (k: string) =>
+  lang === "de"
+    ? k === "product" ? "Produkt" : k === "company" ? "Unternehmen" : "Rechtliches"
+    : k === "product" ? "Product" : k === "company" ? "Company" : "Legal";
+---
+
+<div class="kit-root" style={`background: var(--color-bg); --accent: ${accent};`}>
+
+  {/* Top nav */}
+  <header
+    style="display: flex; align-items: center; justify-content: space-between; padding: 20px 56px; border-bottom: 1px solid var(--color-line-soft);"
+  >
+    <Logo name={name} />
+    <nav style="display: flex; gap: 32px; font-size: 14px;">
+      <a href="#features" style="color: var(--color-ink-2); text-decoration: none; font-weight: 500;">{t.nav.product}</a>
+      <a href="#pricing" style="color: var(--color-ink-2); text-decoration: none; font-weight: 500;">{t.nav.pricing}</a>
+      <a href="#proof" style="color: var(--color-ink-2); text-decoration: none; font-weight: 500;">{t.nav.cases}</a>
+      <a href="#" style="color: var(--color-ink-2); text-decoration: none; font-weight: 500;">{t.nav.docs}</a>
+    </nav>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <a href="#" style="color: var(--color-ink-2); text-decoration: none; font-weight: 500; font-size: 14px;">{t.nav.login}</a>
+      <a class="btn btn-primary" href="#cta">{t.nav.cta}</a>
+    </div>
+  </header>
+
+  {/* Hero */}
+  <section style="padding: 100px 56px 80px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center;">
+    <div>
+      <div class="eyebrow" style="margin-bottom: 32px;">
+        <span class="live-dot" style="margin-right: 10px; vertical-align: middle;"></span>
+        {t.hero.eyebrow}
+      </div>
+      <h1
+        style="font-size: 76px; line-height: 1.02; font-weight: 400; letter-spacing: -0.035em; margin-bottom: 28px;"
+      >
+        {headlineLines.map((line, i) => (
+          <span style="display: block;">
+            {i === 1 ? <span class="serif" style="font-size: 84px;">{line}</span> : line}
+          </span>
+        ))}
+      </h1>
+      <p style="font-size: 19px; line-height: 1.55; color: var(--color-ink-2); max-width: 540px; margin-bottom: 36px;">
+        {fillName(t.hero.sub, name)}
+      </p>
+      <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+        <a class="btn btn-primary" href="#cta" style="font-size: 15px; padding: 14px 22px;">
+          {t.hero.cta_primary} <span style="opacity: 0.6;">→</span>
+        </a>
+        <a class="btn btn-secondary" href="#" style="font-size: 15px; padding: 14px 22px;">
+          ▶ {t.hero.cta_secondary}
+        </a>
+      </div>
+      <div style="font-size: 13px; color: var(--color-ink-3);">{t.hero.trust}</div>
+    </div>
+
+    <ChatPreviewMock name={name} lang={lang} />
+  </section>
+
+  {/* Metrics band */}
+  <section
+    style="padding: 48px 56px; border-top: 1px solid var(--color-line-soft); border-bottom: 1px solid var(--color-line-soft); background: var(--color-bg-soft);"
+  >
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;">
+      {t.metrics.map((m) => (
+        <div>
+          <div class="stat-num">{m.num}</div>
+          <div style="font-size: 15px; font-weight: 500; color: var(--color-ink); margin-top: 6px;">{m.label}</div>
+          <div style="font-size: 13px; color: var(--color-ink-3); margin-top: 2px;">{m.note}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* Features */}
+  <section id="features" style="padding: 120px 56px;">
+    <div style="max-width: 720px; margin-bottom: 64px;">
+      <div class="eyebrow" style="margin-bottom: 16px;">{t.features.eyebrow}</div>
+      <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; white-space: pre-line; margin-bottom: 20px; font-weight: 500;">
+        {featuresTitle}
+      </h2>
+      <p style="font-size: 17px; color: var(--color-ink-2); line-height: 1.55;">
+        {fillName(t.features.sub, name)}
+      </p>
+    </div>
+    <div
+      style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--color-line-soft); border: 1px solid var(--color-line-soft);"
+    >
+      {t.features.items.map((f) => (
+        <div style="background: var(--color-bg); padding: 40px 36px;">
+          <div class="mono" style={`font-size: 13px; color: ${accent}; margin-bottom: 16px;`}>{f.tag}</div>
+          <h3 style="font-size: 24px; margin-bottom: 12px; letter-spacing: -0.015em; font-weight: 500;">{f.title}</h3>
+          <p style="font-size: 15px; color: var(--color-ink-2); line-height: 1.6; margin: 0;">{f.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* Integration steps */}
+  <section
+    style="padding: 100px 56px; background: var(--color-bg-soft); border-top: 1px solid var(--color-line-soft); border-bottom: 1px solid var(--color-line-soft);"
+  >
+    <div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px;">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">{t.integration.eyebrow}</div>
+        <h2 style="font-size: 44px; line-height: 1.05; letter-spacing: -0.025em; white-space: pre-line; font-weight: 500;">
+          {integrationTitle}
+        </h2>
+        <div
+          style="margin-top: 28px; display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; background: #fff; border: 1px solid var(--color-line); border-radius: 100px; font-size: 13px;"
+        >
+          <WooLogo /> {wooBadge}
+        </div>
+      </div>
+      <div>
+        {t.integration.steps.map((s, i) => (
+          <div style={`display: flex; gap: 20px; padding: 20px 0; border-top: ${i === 0 ? "none" : "1px solid var(--color-line)"};`}>
+            <div class="mono" style="font-size: 13px; color: var(--color-ink-3); width: 24px; padding-top: 4px;">0{s.n}</div>
+            <div>
+              <div style="font-size: 18px; font-weight: 500; margin-bottom: 4px;">{s.title}</div>
+              <div style="font-size: 14px; color: var(--color-ink-2); line-height: 1.5;">{s.body}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Proof */}
+  <section id="proof" style="padding: 120px 56px;">
+    <div class="eyebrow" style="margin-bottom: 16px;">{t.proof.eyebrow}</div>
+    <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; white-space: pre-line; margin-bottom: 56px; font-weight: 500;">
+      {proofTitle}
+    </h2>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px;">
+      {t.proof.quotes.map((q) => (
+        <figure style="margin: 0; padding: 36px; border: 1px solid var(--color-line); border-radius: var(--radius);">
+          <blockquote
+            style="margin: 0 0 24px; font-size: 19px; line-height: 1.5; font-family: var(--font-display); font-style: italic; color: var(--color-ink);"
+          >
+            "{q.text}"
+          </blockquote>
+          <figcaption style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 36px; height: 36px; border-radius: 100px; background: var(--color-bg-soft); border: 1px solid var(--color-line);"></div>
+            <div>
+              <div style="font-size: 14px; font-weight: 500;">{q.name}</div>
+              <div style="font-size: 13px; color: var(--color-ink-3);">{q.role}</div>
+            </div>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  {/* Pricing */}
+  <section
+    id="pricing"
+    style="padding: 120px 56px; background: var(--color-bg-soft); border-top: 1px solid var(--color-line-soft);"
+  >
+    <div style="max-width: 760px; margin-bottom: 56px;">
+      <div class="eyebrow" style="margin-bottom: 16px;">{t.pricing.eyebrow}</div>
+      <h2 style="font-size: 52px; line-height: 1.05; letter-spacing: -0.025em; white-space: pre-line; margin-bottom: 20px; font-weight: 500;">
+        {pricingTitle}
+      </h2>
+      <p style="font-size: 17px; color: var(--color-ink-2); line-height: 1.55;">
+        {fillName(t.pricing.sub, name)}
+      </p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+      {t.pricing.tiers.map((p) => (
+        <div
+          style={`padding: 32px; background: ${p.highlight ? "var(--color-ink)" : "var(--color-bg-card)"}; color: ${p.highlight ? "#fff" : "var(--color-ink)"}; border-radius: var(--radius); border: ${p.highlight ? "none" : "1px solid var(--color-line)"}; position: relative;`}
+        >
+          {p.highlight && (
+            <div
+              style={`position: absolute; top: 16px; right: 16px; font-size: 11px; padding: 4px 8px; background: ${accent}; border-radius: 100px; font-family: var(--font-mono); letter-spacing: 0.06em;`}
+            >{popularLabel}</div>
+          )}
+          <div style={`font-size: 14px; font-weight: 500; opacity: ${p.highlight ? 0.7 : 1}; color: ${p.highlight ? "#fff" : "var(--color-ink-3)"}; margin-bottom: 4px;`}>{p.name}</div>
+          <div style="font-size: 14px; opacity: 0.7; margin-bottom: 24px;">{p.desc}</div>
+          <div style="margin-bottom: 28px;">
+            <span style="font-size: 44px; font-weight: 400; font-family: var(--font-display); font-style: italic; letter-spacing: -0.02em;">{p.price}</span>
+            <span style="font-size: 15px; opacity: 0.7; margin-left: 4px;">{p.per}</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 0 0 28px; display: grid; gap: 10px;">
+            {p.feats.map((f) => (
+              <li style={`font-size: 14px; display: flex; gap: 10px; align-items: center; opacity: ${p.highlight ? 0.92 : 1};`}>
+                <span style={`color: ${p.highlight ? accent : "var(--color-accent-deep)"};`}>✓</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+          <button
+            class={p.highlight ? "btn btn-accent" : "btn btn-secondary"}
+            style="width: 100%; justify-content: center;"
+          >{choose}</button>
+        </div>
+      ))}
+    </div>
+    <div style="text-align: center; margin-top: 32px; font-size: 13px; color: var(--color-ink-3);">
+      {t.pricing.revshare}
+    </div>
+  </section>
+
+  {/* FAQ */}
+  <section style="padding: 120px 56px;">
+    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px;">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 16px;">{t.faq.eyebrow}</div>
+      </div>
+      <div>
+        {t.faq.items.map((f) => (
+          <details style="border-top: 1px solid var(--color-line); padding: 20px 0;">
+            <summary
+              style="font-size: 18px; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between;"
+            >
+              {f.q}
+              <span style="color: var(--color-ink-3);">+</span>
+            </summary>
+            <p style="font-size: 15px; color: var(--color-ink-2); line-height: 1.6; margin-top: 12px; margin-bottom: 0;">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Final CTA */}
+  <section id="cta" style="padding: 120px 56px; background: var(--color-ink); color: #fff;">
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: end;">
+      <h2 style="font-size: 84px; line-height: 0.98; letter-spacing: -0.035em; font-weight: 400; margin: 0;">
+        {finalCtaLines.map((line, i) => (
+          <span style="display: block;">
+            {i === 1 ? <span class="serif" style="font-size: 96px;">{line}</span> : line}
+          </span>
+        ))}
+      </h2>
+      <div>
+        <p style="font-size: 18px; color: rgba(255,255,255,0.7); margin-bottom: 28px; line-height: 1.5;">{t.final_cta.sub}</p>
+        <a class="btn" href="#" style={`background: ${accent}; color: #fff; font-size: 16px; padding: 16px 26px;`}>
+          {t.final_cta.cta} →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* Footer */}
+  <footer
+    style="background: var(--color-ink); color: rgba(255,255,255,0.7); padding: 60px 56px 32px; border-top: 1px solid rgba(255,255,255,0.08);"
+  >
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px;">
+      <div>
+        <div style="margin-bottom: 16px;"><Logo name={name} mode="dark" /></div>
+        <div style="font-size: 13px; opacity: 0.7;">{t.footer.tag}</div>
+      </div>
+      {Object.entries(t.footer.cols).map(([k, items]) => (
+        <div>
+          <div style="font-size: 12px; opacity: 0.5; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">
+            {colKey(k)}
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            {(items as string[]).map((x) => (
+              <a href="#" style="color: rgba(255,255,255,0.7); font-size: 14px; text-decoration: none;">{x}</a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; font-size: 12px; opacity: 0.5;">
+      © 2026 {name}. Made for WooCommerce.
+    </div>
+  </footer>
+</div>

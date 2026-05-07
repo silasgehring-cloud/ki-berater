@@ -1,0 +1,32 @@
+---
+import { BRAND } from "../../data/brand";
+
+interface Props {
+  name?: string;
+  mode?: "light" | "dark";
+  variant?: "default" | "serif" | "accent-mark";
+  accent?: string;
+}
+
+const { name = BRAND, mode = "light", variant = "default", accent } = Astro.props;
+const initial = (name[0] ?? "k").toLowerCase();
+
+const isDark = mode === "dark";
+const logoStyle = isDark ? "color: #fff;" : "";
+
+let markStyle = "";
+if (variant === "accent-mark" && accent) {
+  markStyle = `background: ${accent}; color: #fff;`;
+} else if (isDark) {
+  markStyle = "background: #fff; color: var(--color-ink);";
+}
+---
+
+<span class="logo" style={logoStyle}>
+  <span class="logo-mark" style={markStyle}>{initial}</span>
+  {variant === "serif" ? (
+    <span style="font-family: var(--font-display); font-style: italic; font-size: 22px; font-weight: 400;">{name}</span>
+  ) : (
+    <span>{name}</span>
+  )}
+</span>

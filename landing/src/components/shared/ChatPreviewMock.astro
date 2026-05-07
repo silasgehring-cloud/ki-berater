@@ -1,0 +1,174 @@
+---
+import { BRAND, type Lang } from "../../data/brand";
+
+interface Props {
+  name?: string;
+  lang?: Lang;
+}
+
+const { name = BRAND, lang = "de" } = Astro.props;
+const initial = (name[0] ?? "k").toLowerCase();
+const isDe = lang === "de";
+
+const items = [1, 2, 3, 4, 5, 6];
+---
+
+<div
+  style="
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+    box-shadow: 0 30px 60px -20px rgba(26,25,22,0.18), 0 12px 24px -8px rgba(26,25,22,0.08);
+    overflow: hidden;
+    position: relative;
+  "
+>
+  {/* Mini browser chrome */}
+  <div
+    style="
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--color-line-soft);
+      background: var(--color-bg-soft);
+    "
+  >
+    <span style="width: 10px; height: 10px; border-radius: 100px; background: #e8e4db;"></span>
+    <span style="width: 10px; height: 10px; border-radius: 100px; background: #e8e4db;"></span>
+    <span style="width: 10px; height: 10px; border-radius: 100px; background: #e8e4db;"></span>
+    <div style="flex: 1; margin-left: 12px; font-size: 12px; color: var(--color-ink-3); font-family: var(--font-mono);">
+      shop.example.com/produkte
+    </div>
+  </div>
+
+  {/* Fake shop content */}
+  <div
+    style="
+      padding: 18px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+      background: #fafaf7;
+    "
+  >
+    {items.map((i) => (
+      <div
+        style="
+          aspect-ratio: 1/1.2;
+          background: #fff;
+          border: 1px solid var(--color-line-soft);
+          border-radius: 4px;
+          padding: 8px;
+          display: flex; flex-direction: column; justify-content: space-between;
+        "
+      >
+        <div class="placeholder" style="flex: 1; font-size: 8px;">{isDe ? "Produkt" : "Product"}</div>
+        <div style="margin-top: 6px; font-size: 9px; color: var(--color-ink-2);">
+          <div style="font-weight: 500;">Item {i}</div>
+          <div style="color: var(--color-ink-3);">€{29 + i * 12}</div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* Chat widget overlay */}
+  <div
+    style="
+      position: absolute; bottom: 16px; right: 16px;
+      width: 280px;
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 40px -12px rgba(26,25,22,0.25);
+      border: 1px solid var(--color-line);
+      overflow: hidden;
+    "
+  >
+    <div
+      style="
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--color-line-soft);
+        display: flex; align-items: center; gap: 10px;
+      "
+    >
+      <div
+        style="
+          width: 28px; height: 28px; border-radius: 100px;
+          background: var(--color-ink); color: #fff;
+          display: flex; align-items: center; justify-content: center;
+          font-family: var(--font-display); font-style: italic;
+          font-size: 14px;
+        "
+      >
+        {initial}
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: 13px; font-weight: 500;">{name}</div>
+        <div style="font-size: 11px; color: var(--color-ink-3); display: flex; align-items: center; gap: 5px;">
+          <span class="live-dot"></span>{isDe ? "Online · antwortet sofort" : "Online · replies instantly"}
+        </div>
+      </div>
+    </div>
+    <div
+      style="
+        padding: 14px;
+        display: flex; flex-direction: column; gap: 10px;
+        background: #fafaf7;
+      "
+    >
+      <div
+        style="
+          align-self: flex-start; max-width: 85%;
+          padding: 8px 12px; background: #fff;
+          border-radius: 12px 12px 12px 4px;
+          font-size: 12px; line-height: 1.4;
+          border: 1px solid var(--color-line-soft);
+        "
+      >
+        {isDe ? "Suchen Sie etwas Bestimmtes? Ich helfe gerne." : "Looking for something specific? Happy to help."}
+      </div>
+      <div
+        style="
+          align-self: flex-end; max-width: 85%;
+          padding: 8px 12px; background: var(--color-ink); color: #fff;
+          border-radius: 12px 12px 4px 12px;
+          font-size: 12px; line-height: 1.4;
+        "
+      >
+        {isDe ? "Geschenk für meinen Vater, läuft viel" : "Gift for my dad, runs a lot"}
+      </div>
+      <div
+        style="
+          align-self: flex-start; max-width: 92%;
+          padding: 8px 12px; background: #fff;
+          border-radius: 12px 12px 12px 4px;
+          font-size: 12px; line-height: 1.4;
+          border: 1px solid var(--color-line-soft);
+        "
+      >
+        {isDe ? "Wie viele km/Woche und welcher Untergrund — Asphalt oder Trail?" : "How many km/week and which surface — road or trail?"}
+      </div>
+    </div>
+    <div
+      style="
+        padding: 10px;
+        border-top: 1px solid var(--color-line-soft);
+        display: flex; align-items: center; gap: 8px;
+      "
+    >
+      <div
+        style="
+          flex: 1; padding: 6px 10px;
+          background: var(--color-bg-soft); border-radius: 100px;
+          font-size: 11px; color: var(--color-ink-4);
+        "
+      >
+        {isDe ? "Antworten…" : "Reply…"}
+      </div>
+      <div
+        style="
+          width: 26px; height: 26px; border-radius: 100px;
+          background: var(--color-accent); display: flex;
+          align-items: center; justify-content: center;
+          color: #fff; font-size: 12px;
+        "
+      >↑</div>
+    </div>
+  </div>
+</div>

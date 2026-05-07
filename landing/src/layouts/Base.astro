@@ -1,19 +1,26 @@
 ---
 import "../styles/global.css";
+import { BRAND, type Lang } from "../data/brand";
 
 interface Props {
   title?: string;
   description?: string;
+  lang?: Lang;
 }
 
 const {
-  title = "KI-Verkaufsberater für WooCommerce",
-  description = "Beratet eure Endkunden in Echtzeit. Mehr Umsatz, weniger Bounce, DSGVO-konform aus Deutschland.",
+  lang = "de",
+  title = lang === "de"
+    ? `${BRAND} · KI-Kaufberater für WooCommerce`
+    : `${BRAND} · AI shopping advisor for WooCommerce`,
+  description = lang === "de"
+    ? `${BRAND} ist der KI-Berater, der Ihre Kunden im Shop führt — fragt nach, schlägt das Richtige vor, beantwortet Detailfragen. 24/7, in jeder Sprache.`
+    : `${BRAND} is the AI advisor that guides your customers in-store — asks questions, suggests the right thing, answers detail queries. 24/7, in any language.`,
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,12 +29,19 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:locale" content="de_DE" />
+    <meta property="og:locale" content={lang === "de" ? "de_DE" : "en_US"} />
   </head>
-  <body class="bg-white text-slate-900">
+  <body>
     <slot />
   </body>
 </html>

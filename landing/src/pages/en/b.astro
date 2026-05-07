@@ -1,0 +1,11 @@
+---
+import Base from "../../layouts/Base.astro";
+import LangToggle from "../../components/shared/LangToggle.astro";
+import LandingB from "../../components/landing-b/LandingB.astro";
+import { BRAND } from "../../data/brand";
+---
+
+<Base lang="en" title={`${BRAND} · Editorial · Advice that sells.`}>
+  <LangToggle lang="en" path="/en/b" />
+  <LandingB lang="en" />
+</Base>

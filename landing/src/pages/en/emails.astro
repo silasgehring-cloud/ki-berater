@@ -1,0 +1,27 @@
+---
+import Base from "../../layouts/Base.astro";
+import LangToggle from "../../components/shared/LangToggle.astro";
+import EmailCard from "../../components/emails/EmailCard.astro";
+import { BRAND } from "../../data/brand";
+---
+
+<Base lang="en" title={`${BRAND} · Cold-outreach emails`}>
+  <LangToggle lang="en" path="/en/emails" />
+  <main style="min-height: 100vh; padding: 64px 32px; background: var(--color-bg);">
+    <header style="max-width: 1180px; margin: 0 auto 48px;">
+      <div class="eyebrow" style="margin-bottom: 12px;">SALES KIT · 04 / 04</div>
+      <h1 style="font-size: 44px; line-height: 1.05; letter-spacing: -0.025em; font-weight: 400; margin: 0 0 12px;">
+        Cold-outreach <span class="serif">emails</span>
+      </h1>
+      <p style="font-size: 16px; color: var(--color-ink-2); max-width: 620px; margin: 0; line-height: 1.55;">
+        Three tones to adapt — direct ROI pitch, story with an observation, or short follow-up.
+      </p>
+    </header>
+
+    <div style="max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 24px; justify-items: center;">
+      <EmailCard variant="direct" lang="en" />
+      <EmailCard variant="story" lang="en" />
+      <EmailCard variant="followup" lang="en" />
+    </div>
+  </main>
+</Base>
